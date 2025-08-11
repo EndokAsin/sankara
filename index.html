@@ -33,8 +33,7 @@
             scroll-behavior: smooth;
         }
         /* Efek Aurora di Background */
-        body::before {
-            content: '';
+        .aurora-background {
             position: absolute;
             top: 0;
             left: 0;
@@ -69,21 +68,21 @@
       }
     </script>
 </head>
-<body class="bg-sankara-green-light text-sankara-dark relative">
+<body class="bg-sankara-green-light text-sankara-dark relative min-h-screen flex flex-col">
 
     <!-- Wrapper untuk Header Melayang Bulat (Glassmorphism) -->
     <div class="sticky top-0 z-50 p-2 md:p-4">
         <header class="container mx-auto bg-white/50 backdrop-blur-2xl rounded-full shadow-xl shadow-gray-200/50 border border-white/30">
             <div class="flex justify-between items-center px-4 md:px-6 py-3">
                 <!-- Logo di Kiri -->
-                <a href="index.html">
-                    <img src="logo.png" alt="Sankara Logo" class="h-20 md:h-15" onerror="this.onerror=null; this.outerHTML='<span class=\'font-brand text-2xl font-bold text-sankara-dark\'>Sankara</span>'">
+                <a href="#">
+                    <img src="logo.png" alt="Sankara Logo" class="h-8 md:h-10" onerror="this.onerror=null; this.outerHTML='<span class=\'text-2xl font-bold text-sankara-dark\'>SANKARA</span>'">
                 </a>
 
                 <!-- Navigasi dan Tombol di Kanan -->
                 <div class="flex items-center">
                     <nav class="hidden md:flex items-center space-x-8 lg:space-x-10 text-sankara-dark mr-6">
-                        <a href="index.html" class="hover:text-sankara-green-dark transition-colors">Home</a>
+                        <a href="#hero" class="hover:text-sankara-green-dark transition-colors">Home</a>
                         <!-- Dropdown Tentang Kami -->
                         <div class="relative" id="about-dropdown-container">
                             <button id="about-dropdown-button" class="flex items-center hover:text-sankara-green-dark transition-colors">
@@ -91,16 +90,16 @@
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                             <div id="about-dropdown-menu" class="absolute hidden mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-20">
-                                <a href="tentang.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
-                                <a href="tim.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tim Kami</a>
-                                <a href="visimisi.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Visi & Misi</a>
-                                <a href="laporan.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Laporan Tahunan</a>
-                                <a href="kontak.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kontak</a>
+                                <a href="#about" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+                                <a href="#team" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tim Kami</a>
+                                <a href="#vision" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Visi & Misi</a>
+                                <a href="#report" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Laporan Tahunan</a>
+                                <a href="#contact" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kontak</a>
                             </div>
                         </div>
                         <a href="program.html" class="hover:text-sankara-green-dark transition-colors">Program</a>
-                        <a href="berita.html" class="hover:text-sankara-green-dark transition-colors">Berita</a>
-                        <a href="mitra.html" class="hidden lg:block hover:text-sankara-green-dark transition-colors">Mitra</a>
+                        <a href="#news" class="hover:text-sankara-green-dark transition-colors">Berita</a>
+                        <a href="#partners" class="hidden lg:block hover:text-sankara-green-dark transition-colors">Mitra</a>
                     </nav>
                     <div class="hidden md:flex items-center">
                         <a href="#donate" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md hover:shadow-lg">
@@ -114,75 +113,82 @@
             </div>
         </header>
     </div>
-
-    <main>
-        <!-- Hero Section -->
-        <section id="hero" class="container mx-auto px-6 py-20 md:py-32 flex flex-col md:flex-row items-center overflow-hidden">
-            <div class="md:w-1/2 text-left mb-12 md:mb-0 fade-in-element">
-                <h1 class="text-5xl md:text-7xl font-extrabold text-sankara-dark leading-tight">
-                    Keadilan dimulai saat <span class="bg-gradient-to-r from-sankara-green-dark to-green-400 bg-clip-text text-transparent">ketidaksetaraan</span> berakhir.
-                </h1>
-                <p class="mt-6 text-lg text-gray-600">
-                    Mari bersama wujudkan dunia di mana setiap orang memiliki kekuatan untuk membentuk masa depan mereka sendiri.
-                </p>
-                <div class="mt-10 flex flex-col sm:flex-row gap-4">
-                    <a href="program.html" class="bg-sankara-dark text-white font-bold py-3 px-8 rounded-lg hover:bg-black transition-all duration-300 transform hover:scale-105">
-                        Jelajahi Program
-                    </a>
-                     <a href="#donate" class="bg-sankara-green-dark text-white font-bold py-3 px-8 rounded-lg hover:bg-sankara-green-dark/90 transition-all duration-300 transform hover:scale-105">
-                        Donasi
-                    </a>
-                </div>
-            </div>
-            <div class="md:w-1/2 flex justify-center items-center fade-in-element" style="animation-delay: 200ms;">
-                <!-- Komposisi gambar dengan bentuk unik baru -->
-                 <div class="relative w-[350px] h-[400px] md:w-[500px] md:h-[500px]">
-                    <!-- Decorative Shapes -->
-                    <div class="absolute -top-8 -left-8 w-24 h-24 bg-sankara-green/50 rounded-full filter blur-xl opacity-70"></div>
-                    <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-teal-300/30 rounded-full filter blur-xl opacity-70"></div>
-                    
-                    <!-- Main Image with Clip Path -->
-                    <div class="absolute inset-0 transform rotate-12">
-                        <div class="w-full h-full bg-gray-200 rounded-[80px] overflow-hidden shadow-2xl">
-                             <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop" alt="Children smiling together" class="w-full h-full object-cover transform -rotate-12 scale-125">
-                        </div>
+    
+    <div class="relative flex-grow">
+        <div class="aurora-background"></div>
+        <main>
+            <!-- Hero Section -->
+            <section id="hero" class="container mx-auto px-6 py-20 md:py-32 flex flex-col md:flex-row items-center overflow-hidden">
+                <div class="md:w-1/2 text-left mb-12 md:mb-0 fade-in-element">
+                    <h1 class="text-5xl md:text-7xl font-extrabold text-sankara-dark leading-tight">
+                        Keadilan dimulai saat <span class="bg-gradient-to-r from-sankara-green-dark to-green-400 bg-clip-text text-transparent">ketidaksetaraan</span> berakhir.
+                    </h1>
+                    <p class="mt-6 text-lg text-gray-600">
+                        Mari bersama wujudkan dunia di mana setiap orang memiliki kekuatan untuk membentuk masa depan mereka sendiri.
+                    </p>
+                    <div class="mt-10 flex flex-col sm:flex-row gap-4">
+                        <a href="program.html" class="bg-sankara-dark text-white font-bold py-3 px-8 rounded-lg hover:bg-black transition-all duration-300 transform hover:scale-105">
+                            Jelajahi Program
+                        </a>
+                         <a href="#donate" class="bg-sankara-green-dark text-white font-bold py-3 px-8 rounded-lg hover:bg-sankara-green-dark/90 transition-all duration-300 transform hover:scale-105">
+                            Donasi
+                        </a>
                     </div>
-                     <!-- Decorative dots -->
-                    <div class="absolute top-1/4 -right-4 w-4 h-4 bg-sankara-green rounded-full"></div>
-                    <div class="absolute bottom-1/4 -left-4 w-6 h-6 bg-teal-400 rounded-full"></div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Programs Section -->
-        <section id="events" class="bg-white py-24">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-sankara-dark">Program Unggulan</h2>
-                    <p class="mt-2 text-gray-600">Beberapa kegiatan yang sedang dan akan kami jalankan.</p>
+                <div class="md:w-1/2 flex justify-center items-center fade-in-element" style="animation-delay: 200ms;">
+                    <!-- Komposisi gambar dengan bentuk unik baru -->
+                     <div class="relative w-[350px] h-[400px] md:w-[500px] md:h-[500px]">
+                        <!-- Decorative Shapes -->
+                        <div class="absolute -top-8 -left-8 w-24 h-24 bg-sankara-green/50 rounded-full filter blur-xl opacity-70"></div>
+                        <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-teal-300/30 rounded-full filter blur-xl opacity-70"></div>
+                        
+                        <!-- Main Image with Clip Path -->
+                        <div class="absolute inset-0 transform rotate-12">
+                            <div class="w-full h-full bg-gray-200 rounded-[80px] overflow-hidden shadow-2xl">
+                                 <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop" alt="Children smiling together" class="w-full h-full object-cover transform -rotate-12 scale-125">
+                            </div>
+                        </div>
+                         <!-- Decorative dots -->
+                        <div class="absolute top-1/4 -right-4 w-4 h-4 bg-sankara-green rounded-full"></div>
+                        <div class="absolute bottom-1/4 -left-4 w-6 h-6 bg-teal-400 rounded-full"></div>
+                    </div>
                 </div>
-                <div id="events-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    <p id="events-loader" class="text-center text-gray-500 col-span-full">Memuat program...</p>
+            </section>
+
+            <!-- Programs Section -->
+            <section id="events" class="bg-white py-24">
+                <div class="container mx-auto px-6">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-sankara-dark">Program Unggulan</h2>
+                        <p class="mt-2 text-gray-600">Beberapa kegiatan yang sedang dan akan kami jalankan.</p>
+                    </div>
+                    <div id="events-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        <p id="events-loader" class="text-center text-gray-500 col-span-full">Memuat program...</p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- About Section -->
-        <section id="about" class="py-24 bg-sankara-green-light">
-             <div class="container mx-auto px-6 text-center">
-                <h2 class="text-4xl font-bold text-sankara-dark mb-4 fade-in-element">Selamat Datang di Jaringan Sankara</h2>
-                <p id="about-content" class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed fade-in-element" style="animation-delay: 200ms;">
-                    Memuat deskripsi...
-                </p>
+            <!-- About Section -->
+            <section id="about" class="py-24 bg-sankara-green-light">
+                 <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-4xl font-bold text-sankara-dark mb-4 fade-in-element">Selamat Datang di Jaringan Sankara</h2>
+                    <p id="about-content" class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed fade-in-element" style="animation-delay: 200ms;">
+                        Memuat deskripsi...
+                    </p>
+                </div>
+            </section>
+            
+            <!-- Placeholder Sections -->
+            <div id="placeholder-sections">
+                <section id="team" class="py-24 bg-white"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Tim Kami</h2></div></section>
+                <section id="vision" class="py-24 bg-sankara-green-light"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Visi & Misi</h2></div></section>
+                <section id="report" class="py-24 bg-white"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Laporan Tahunan</h2></div></section>
+                <section id="news" class="py-24 bg-sankara-green-light"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Berita Terbaru</h2></div></section>
+                <section id="partners" class="py-24 bg-white"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Mitra Kami</h2></div></section>
+                <section id="donate" class="py-24 bg-sankara-green-light"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Donasi</h2></div></section>
             </div>
-        </section>
-        
-        <!-- Placeholder Sections -->
-        <div id="placeholder-sections">
-
-            <section id="news" class="py-24 bg-sankara-green-light"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Berita Terbaru</h2></div></section>
-        </div>
-    </main>
+        </main>
+    </div>
     
     <!-- Footer -->
     <footer id="contact" class="bg-sankara-dark text-white pt-16 pb-8">
@@ -199,10 +205,10 @@
                 <div>
                     <h3 class="text-lg font-bold mb-4">Tautan Cepat</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="tentang.html" class="text-gray-400 hover:text-white transition-colors">Tentang Kami</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">Tentang Kami</a></li>
                         <li><a href="program.html" class="text-gray-400 hover:text-white transition-colors">Program</a></li>
-                        <li><a href="berita.html" class="text-gray-400 hover:text-white transition-colors">Berita</a></li>
-                        <li><a href="mitra.html" class="text-gray-400 hover:text-white transition-colors">Mitra</a></li>
+                        <li><a href="#news" class="text-gray-400 hover:text-white transition-colors">Berita</a></li>
+                        <li><a href="#partners" class="text-gray-400 hover:text-white transition-colors">Mitra</a></li>
                     </ul>
                 </div>
                 <!-- Kolom Kontak -->
@@ -225,6 +231,12 @@
                     <div class="flex space-x-4">
                         <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-sankara-green transition-colors">
                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-sankara-green transition-colors">
+                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.148 2 12.315 2zm-1.161 1.545a3.37 3.37 0 10-4.252 4.252 3.37 3.37 0 004.252-4.252zM12 15.562a3.562 3.562 0 100-7.125 3.562 3.562 0 000 7.125z" clip-rule="evenodd"></path></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-sankara-green transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.78 22 12 22 12s0 3.22-.418 4.814a2.504 2.504 0 01-1.768 1.768C18.39 19 12 19 12 19s-6.39 0-7.814-.418a2.504 2.504 0 01-1.768-1.768C2.002 15.22 2 12 2 12s0-3.22.418-4.814a2.504 2.504 0 011.768-1.768C5.61 5 12 5 12 5s6.39 0 7.812.418zM9.75 15.5V8.5l6 3.5-6 3.5z" clip-rule="evenodd"></path></svg>
                         </a>
                     </div>
                 </div>
