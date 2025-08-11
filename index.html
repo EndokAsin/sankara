@@ -14,6 +14,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0fdf4; /* Warna latar utama hijau sangat muda */
+            overflow-x: hidden; /* Mencegah scroll horizontal */
         }
         .font-brand {
             font-family: 'Playfair Display', serif;
@@ -68,7 +69,6 @@
     </script>
 </head>
 <body class="bg-sankara-green-light text-sankara-dark relative min-h-screen flex flex-col">
-<div class="overflow-x-hidden">
     <!-- Wrapper untuk Header Melayang Bulat (Glassmorphism) -->
     <div class="sticky top-0 z-50 p-2 md:p-4">
         <header class="container mx-auto bg-white/50 backdrop-blur-2xl rounded-full shadow-xl shadow-gray-200/50 border border-white/30">
@@ -129,15 +129,15 @@
         <div class="aurora-background"></div>
         <main>
             <!-- Hero Section -->
-            <section id="hero" class="container mx-auto px-6 py-20 md:py-32 flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 text-left mb-12 md:mb-0 fade-in-element">
-                    <h1 class="text-5xl md:text-7xl font-extrabold text-sankara-dark leading-tight">
+            <section id="hero" class="container mx-auto px-6 pt-12 pb-20 md:py-32 flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 text-center md:text-left mb-12 md:mb-0 fade-in-element">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-sankara-dark leading-tight">
                         Keadilan dimulai saat <span class="bg-gradient-to-r from-sankara-green-dark to-green-400 bg-clip-text text-transparent">ketidaksetaraan</span> berakhir.
                     </h1>
-                    <p class="mt-6 text-lg text-gray-600">
+                    <p class="mt-6 text-base md:text-lg text-gray-600">
                         Mari bersama wujudkan dunia di mana setiap orang memiliki kekuatan untuk membentuk masa depan mereka sendiri.
                     </p>
-                    <div class="mt-10 flex flex-col sm:flex-row gap-4">
+                    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                         <a href="program.html" class="bg-sankara-dark text-white font-bold py-3 px-8 rounded-lg hover:bg-black transition-all duration-300 transform hover:scale-105">
                             Jelajahi Program
                         </a>
@@ -148,7 +148,7 @@
                 </div>
                 <div class="md:w-1/2 flex justify-center items-center fade-in-element" style="animation-delay: 200ms;">
                     <!-- Komposisi gambar dengan bentuk unik baru -->
-                     <div class="relative w-[350px] h-[400px] md:w-[500px] md:h-[500px]">
+                     <div class="relative w-[300px] h-[350px] sm:w-[350px] sm:h-[400px] md:w-[500px] md:h-[500px]">
                         <!-- Decorative Shapes -->
                         <div class="absolute -top-8 -left-8 w-24 h-24 bg-sankara-green/50 rounded-full filter blur-xl opacity-70"></div>
                         <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-teal-300/30 rounded-full filter blur-xl opacity-70"></div>
