@@ -1,0 +1,304 @@
+:root {
+    --primary-color: #FFA500;
+    --secondary-color: #333333;
+    --text-color: #555555;
+    --background-color: #FFFFFF;
+    --accent-color: #48d1cc;
+    --font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.container-small {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+/* Header */
+header {
+    background-color: var(--background-color);
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo img {
+    height: 40px;
+}
+
+header nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+header nav a {
+    text-decoration: none;
+    color: var(--secondary-color);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+header .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+header .header-right span {
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
+.btn {
+    padding: 10px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #e69500;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #555;
+}
+
+.btn-secondary-outline {
+    background-color: transparent;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.btn-secondary-outline:hover {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+
+/* Hero Section */
+.hero {
+    padding: 80px 0;
+}
+
+.hero .container {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero-content h1 {
+    font-size: 56px;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.hero-content p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.hero-images {
+    flex: 1;
+    position: relative;
+    height: 400px;
+}
+
+.hero-images .image-wrapper {
+    position: absolute;
+    border-radius: 30px;
+    overflow: hidden;
+    transform: rotate(15deg);
+    border: 8px solid white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.hero-images .img1 {
+    width: 60%;
+    height: auto;
+    top: 0;
+    right: 0;
+    z-index: 2;
+}
+.hero-images .img2 {
+    width: 70%;
+    height: auto;
+    bottom: 0;
+    left: -20px;
+    transform: rotate(-10deg);
+    z-index: 1;
+}
+
+.hero-images img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* Programs Section */
+.programs {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.section-title {
+    margin-bottom: 60px;
+}
+
+.section-title p:first-child {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.section-title h2 {
+    font-size: 42px;
+    color: var(--secondary-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.program-cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    flex: 1;
+}
+
+.card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    color: var(--secondary-color);
+    font-size: 20px;
+}
+
+/* Welcome Section */
+.welcome {
+    padding: 80px 0;
+}
+
+.welcome .btn {
+    margin: 10px;
+}
+
+/* Fundraiser Section */
+.fundraiser {
+    padding: 80px 0;
+}
+
+.fundraiser .container {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.fundraiser-image {
+    flex: 1;
+}
+
+.fundraiser-image img {
+    width: 100%;
+    border-radius: 50%;
+    max-width: 400px;
+}
+
+.fundraiser-content {
+    flex: 1.5;
+}
+
+.fundraiser-content h2 {
+    font-size: 42px;
+    color: var(--secondary-color);
+    line-height: 1.3;
+}
+
+.fundraiser-content p {
+    line-height: 1.8;
+}
+
+.learn-more-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Future Section */
+.future {
+    padding: 80px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.future-content {
+    text-align: left;
+}
+.future-content .subtitle{
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.future-content h2 {
+    font-size: 42px;
+    color: var(--secondary-color);
+    margin-top: 0;
+    max-width: 300px;
+}
+
+.future-image img{
+    width: 250px;
+    height: 250px;
+    border-radius: 15px;
+    object-fit: cover;
+}
