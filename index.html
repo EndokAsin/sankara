@@ -75,14 +75,14 @@
         <header class="container mx-auto bg-white/50 backdrop-blur-2xl rounded-full shadow-xl shadow-gray-200/50 border border-white/30">
             <div class="flex justify-between items-center px-4 md:px-6 py-3">
                 <!-- Logo di Kiri -->
-                <a href="#">
+                <a href="index.html">
                     <img src="logo.png" alt="Sankara Logo" class="h-8 md:h-10" onerror="this.onerror=null; this.outerHTML='<span class=\'text-2xl font-bold text-sankara-dark\'>SANKARA</span>'">
                 </a>
 
                 <!-- Navigasi dan Tombol di Kanan -->
                 <div class="flex items-center">
-                    <nav class="hidden md:flex items-center space-x-8 lg:space-x-10 text-sankara-dark mr-6">
-                        <a href="#hero" class="hover:text-sankara-green-dark transition-colors">Home</a>
+                    <nav class="hidden md:flex items-center space-x-4 lg:space-x-8 text-sankara-dark mr-6">
+                        <a href="index.html" class="hover:text-sankara-green-dark transition-colors">Home</a>
                         <!-- Dropdown Tentang Kami -->
                         <div class="relative" id="about-dropdown-container">
                             <button id="about-dropdown-button" class="flex items-center hover:text-sankara-green-dark transition-colors">
@@ -90,16 +90,16 @@
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                             <div id="about-dropdown-menu" class="absolute hidden mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-20">
-                                <a href="#about" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
-                                <a href="#team" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tim Kami</a>
-                                <a href="#vision" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Visi & Misi</a>
-                                <a href="#report" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Laporan Tahunan</a>
-                                <a href="#contact" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kontak</a>
+                                <a href="tentang.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+                                <a href="tim.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tim Kami</a>
+                                <a href="visimisi.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Visi & Misi</a>
+                                <a href="laporan.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Laporan Tahunan</a>
+                                <a href="kontak.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kontak</a>
                             </div>
                         </div>
                         <a href="program.html" class="hover:text-sankara-green-dark transition-colors">Program</a>
-                        <a href="#news" class="hover:text-sankara-green-dark transition-colors">Berita</a>
-                        <a href="#partners" class="hidden lg:block hover:text-sankara-green-dark transition-colors">Mitra</a>
+                        <a href="berita.html" class="hover:text-sankara-green-dark transition-colors">Berita</a>
+                        <a href="mitra.html" class="hidden lg:block hover:text-sankara-green-dark transition-colors">Mitra</a>
                     </nav>
                     <div class="hidden md:flex items-center">
                         <a href="#donate" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md hover:shadow-lg">
@@ -112,6 +112,18 @@
                 </div>
             </div>
         </header>
+    </div>
+    
+    <!-- Menu Mobile (hidden by default) -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg mx-4 rounded-lg -mt-2">
+        <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+        <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
+        <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
+        <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
+        <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
+        <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
+        <a href="#donate" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Donasi Sekarang</a>
     </div>
     
     <div class="relative flex-grow">
@@ -179,13 +191,13 @@
             </section>
             
             <!-- Placeholder Sections -->
-            <div id="placeholder-sections">
-                <section id="team" class="py-24 bg-white"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Tim Kami</h2></div></section>
-                <section id="vision" class="py-24 bg-sankara-green-light"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Visi & Misi</h2></div></section>
-                <section id="report" class="py-24 bg-white"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Laporan Tahunan</h2></div></section>
-                <section id="news" class="py-24 bg-sankara-green-light"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Berita Terbaru</h2></div></section>
-                <section id="partners" class="py-24 bg-white"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Mitra Kami</h2></div></section>
-                <section id="donate" class="py-24 bg-sankara-green-light"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Donasi</h2></div></section>
+            <div id="placeholder-sections" class="hidden">
+                <section id="team"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Tim Kami</h2></div></section>
+                <section id="vision"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Visi & Misi</h2></div></section>
+                <section id="report"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Laporan Tahunan</h2></div></section>
+                <section id="news"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Berita Terbaru</h2></div></section>
+                <section id="partners"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Mitra Kami</h2></div></section>
+                <section id="donate"><div class="container mx-auto px-6 text-center"><h2 class="text-4xl font-bold text-sankara-dark">Donasi</h2></div></section>
             </div>
         </main>
     </div>
@@ -205,10 +217,10 @@
                 <div>
                     <h3 class="text-lg font-bold mb-4">Tautan Cepat</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">Tentang Kami</a></li>
+                        <li><a href="tentang.html" class="text-gray-400 hover:text-white transition-colors">Tentang Kami</a></li>
                         <li><a href="program.html" class="text-gray-400 hover:text-white transition-colors">Program</a></li>
-                        <li><a href="#news" class="text-gray-400 hover:text-white transition-colors">Berita</a></li>
-                        <li><a href="#partners" class="text-gray-400 hover:text-white transition-colors">Mitra</a></li>
+                        <li><a href="berita.html" class="text-gray-400 hover:text-white transition-colors">Berita</a></li>
+                        <li><a href="mitra.html" class="text-gray-400 hover:text-white transition-colors">Mitra</a></li>
                     </ul>
                 </div>
                 <!-- Kolom Kontak -->
