@@ -74,37 +74,42 @@
     <div class="sticky top-0 z-50 p-2 md:p-4">
         <header class="container mx-auto bg-white/50 backdrop-blur-2xl rounded-full shadow-xl shadow-gray-200/50 border border-white/30">
             <div class="flex justify-between items-center px-4 md:px-6 py-3">
+                <!-- Logo di Kiri -->
                 <a href="index.html">
                     <img src="logo.png" alt="Sankara Logo" class="h-15 md:h-20" onerror="this.onerror=null; this.outerHTML='<span class=\'font-brand text-2xl font-bold text-sankara-dark\'>Sankara</span>'">
                 </a>
-                <nav class="hidden md:flex items-center space-x-4 lg:space-x-6 text-sankara-dark">
-                    <a href="index.html" class="hover:text-sankara-green-dark transition-colors">Home</a>
-                    <!-- Dropdown Tentang Kami -->
-                    <div class="relative" id="about-dropdown-container">
-                        <button id="about-dropdown-button" class="flex items-center hover:text-sankara-green-dark transition-colors">
-                            Tentang Kami
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div id="about-dropdown-menu" class="absolute hidden mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-20">
-                            <a href="tentang.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
-                            <a href="tim.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tim Kami</a>
-                            <a href="visimisi.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Visi & Misi</a>
-                            <a href="laporan.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Laporan Tahunan</a>
-                            <a href="kontak.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kontak</a>
+
+                <!-- Navigasi dan Tombol di Kanan -->
+                <div class="flex items-center">
+                    <nav class="hidden md:flex items-center space-x-4 lg:space-x-8 text-sankara-dark mr-6">
+                        <a href="index.html" class="hover:text-sankara-green-dark transition-colors">Home</a>
+                        <!-- Dropdown Tentang Kami -->
+                        <div class="relative" id="about-dropdown-container">
+                            <button id="about-dropdown-button" class="flex items-center hover:text-sankara-green-dark transition-colors">
+                                Tentang Kami
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="about-dropdown-menu" class="absolute hidden right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-20">
+                                <a href="tentang.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+                                <a href="tim.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Tim Kami</a>
+                                <a href="visimisi.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Visi & Misi</a>
+                                <a href="laporan.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Laporan Tahunan</a>
+                                <a href="kontak.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kontak</a>
+                            </div>
                         </div>
+                        <a href="program.html" class="hover:text-sankara-green-dark transition-colors">Program</a>
+                        <a href="berita.html" class="text-sankara-green-dark font-semibold">Berita</a>
+                        <a href="mitra.html" class="hidden lg:block hover:text-sankara-green-dark transition-colors">Mitra</a>
+                    </nav>
+                    <div class="hidden md:flex items-center">
+                        <a href="index.html#donate" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md hover:shadow-lg">
+                            Donasi Sekarang
+                        </a>
                     </div>
-                    <a href="program.html" class="hover:text-sankara-green-dark transition-colors">Program</a>
-                    <a href="berita.html" class="text-sankara-green-dark font-semibold">Berita</a>
-                    <a href="mitra.html" class="hidden lg:block hover:text-sankara-green-dark transition-colors">Mitra</a>
-                </nav>
-                <div class="hidden md:flex items-center">
-                    <a href="index.html#donate" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md hover:shadow-lg">
-                        Donasi Sekarang
-                    </a>
+                    <button id="mobile-menu-button" class="md:hidden text-sankara-dark">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                    </button>
                 </div>
-                <button id="mobile-menu-button" class="md:hidden text-sankara-dark">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
-                </button>
             </div>
         </header>
     </div>
