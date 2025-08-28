@@ -33,8 +33,7 @@
             scroll-behavior: smooth;
         }
         /* Efek Aurora di Background */
-        body::before {
-            content: '';
+        .aurora-background {
             position: absolute;
             top: 0;
             left: 0;
@@ -108,6 +107,18 @@
                 </button>
             </div>
         </header>
+    </div>
+
+    <!-- Menu Mobile (hidden by default) -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg mx-4 rounded-lg -mt-2">
+        <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+        <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
+        <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
+        <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
+        <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
+        <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
+        <a href="index.html#donate" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Donasi Sekarang</a>
     </div>
 
     <div class="relative flex-grow">
