@@ -176,7 +176,7 @@ const fetchAndRenderPrograms = async () => {
 
     } catch (error) {
         console.error('Error fetching programs:', error);
-        upcomingContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Gagal memuat program. Coba lagi nanti.</p>`;
+        upcomingContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Gagal memuat program. Periksa koneksi dan izin akses Anda.</p>`;
     } finally {
         eventsLoader.style.display = 'none';
     }
