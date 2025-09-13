@@ -2,7 +2,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 // Konfigurasi Supabase
 const supabaseUrl = 'https://vfdxtujestpslpsvdkwh.supabase.co';
-const supabaseAnonKey = 'yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 let currentUser = null;
@@ -183,6 +183,13 @@ const fetchAndRenderPrograms = async () => {
 };
 
 const openDetailModal = (eventId) => {
+    // Pengecekan login dipindahkan ke sini
+    if (!currentUser) {
+        alert("Anda harus login terlebih dahulu untuk melihat detail program.");
+        window.location.href = 'auth.html';
+        return; // Hentikan fungsi jika pengguna belum login
+    }
+
     const event = allPrograms.find(e => e.id === eventId);
     if (!event) return;
 
@@ -228,6 +235,7 @@ const openDetailModal = (eventId) => {
 };
 
 const openRegisterModal = (eventId) => {
+    // Pengecekan di sini tetap ada sebagai lapisan keamanan kedua
     if (!currentUser) {
         alert("Anda harus login terlebih dahulu untuk mendaftar.");
         window.location.href = 'auth.html';
@@ -345,3 +353,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setupUIInteractions();
     fetchAndRenderPrograms();
 });
+
