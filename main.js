@@ -1,112 +1,238 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-// --- SETUP SUPABASE CLIENT ---
+// Konfigurasi Supabase
 const supabaseUrl = 'https://vfdxtujestpslpsvdkwh.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// --- UI INTERACTION ---
-const aboutButton = document.getElementById('about-dropdown-button');
-const aboutMenu = document.getElementById('about-dropdown-menu');
-const aboutContainer = document.getElementById('about-dropdown-container');
-const mobileMenuButton = document.getElementById('mobile-menu-button');
-const mobileMenu = document.getElementById('mobile-menu');
+let currentUser = null;
 
-// Dropdown Logic
-if (aboutButton && aboutMenu && aboutContainer) {
-    aboutButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-        aboutMenu.classList.toggle('hidden');
-    });
+// --- AUTHENTICATION & UI HEADER ---
+const setupAuthUI = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    currentUser = session?.user || null;
 
-    window.addEventListener('click', (event) => {
-        if (!aboutContainer.contains(event.target)) {
-            aboutMenu.classList.add('hidden');
+    const authButtonsContainer = document.getElementById('auth-buttons');
+    const mobileMenuContainer = document.getElementById('mobile-menu');
+    
+    if (!authButtonsContainer || !mobileMenuContainer) return;
+
+    mobileMenuContainer.innerHTML = `
+        <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+        <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
+        <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
+        <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
+        <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
+        <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
+    `;
+
+    if (currentUser) {
+        authButtonsContainer.innerHTML = `
+            <a href="profile.html" title="Profil Saya" class="p-2 rounded-full hover:bg-gray-200/50 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-sankara-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </a>
+            <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-red-600 transition-colors">
+                Logout
+            </button>
+        `;
+        document.getElementById('logout-button').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.reload();
+        });
+
+        mobileMenuContainer.innerHTML += `
+            <a href="profile.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Profil Saya</a>
+            <button id="mobile-logout-button" class="block w-full text-left py-2 px-4 text-sm bg-red-500 text-white text-center rounded-md m-2">Logout</button>
+        `;
+        document.getElementById('mobile-logout-button').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        });
+
+    } else {
+        authButtonsContainer.innerHTML = `
+            <a href="auth.html" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md">
+                Jadi Relawan
+            </a>
+        `;
+        mobileMenuContainer.innerHTML += `
+            <a href="auth.html" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Jadi Relawan</a>
+        `;
+    }
+};
+
+// --- UI INTERACTIONS (Dropdowns, Mobile Menu) ---
+const setupUIInteractions = () => {
+    const aboutDropdownButton = document.getElementById('about-dropdown-button');
+    const aboutDropdownMenu = document.getElementById('about-dropdown-menu');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (aboutDropdownButton) {
+        aboutDropdownButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            aboutDropdownMenu.classList.toggle('hidden');
+        });
+    }
+
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+
+    document.addEventListener('click', (event) => {
+        const container = document.getElementById('about-dropdown-container');
+        if (aboutDropdownMenu && container && !container.contains(event.target)) {
+            aboutDropdownMenu.classList.add('hidden');
         }
     });
-}
+};
 
+// --- LOGIKA HALAMAN UTAMA ---
 
-// Mobile Menu Logic
-if (mobileMenuButton && mobileMenu) {
-    mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
-}
+const calculateDaysRemaining = (dateString) => {
+    if (!dateString) return 'Tanggal belum ditentukan';
+    const now = new Date();
+    const eventDate = new Date(dateString);
+    now.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+    const diffTime = eventDate - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > 0) return `Tersisa ${diffDays} hari`;
+    if (diffDays === 0) return 'Berlangsung hari ini';
+    return 'Acara telah selesai';
+};
 
-
-// --- DATA FETCHING ---
-const aboutContentEl = document.getElementById('about-content');
-const eventsContainerEl = document.getElementById('events-container');
-const eventsLoaderEl = document.getElementById('events-loader');
-
-/**
- * Mengambil dan menampilkan konten "Apa itu Sankara".
- */
-async function fetchAboutContent() {
-    if (!aboutContentEl) return;
-    const { data, error } = await supabase.from('site_content').select('value').eq('key', 'about_sankara').single();
-    if (error) {
-        console.error("Error fetching about content:", error);
-        aboutContentEl.textContent = 'Gagal memuat deskripsi.';
-    } else {
-        aboutContentEl.textContent = data?.value || 'Deskripsi default Sankara.';
-    }
-}
-
-/**
- * Mengambil dan menampilkan program/event yang aktif di halaman utama.
- */
-async function fetchActiveEvents() {
-    if (!eventsContainerEl || !eventsLoaderEl) return;
+const fetchAndRenderPrograms = async () => {
+    const container = document.getElementById('events-container');
+    if (!container) return;
+    container.innerHTML = '<p class="text-center col-span-full">Memuat program...</p>';
 
     try {
-        const today = new Date().toISOString();
-        // Mengambil 3 event terdekat
-        const { data, error } = await supabase.from('events').select('*').gte('end_date', today).order('start_date', { ascending: true }).limit(3);
+        const { data, error } = await supabase
+            .from('events')
+            .select('*')
+            .order('start_date', { ascending: true })
+            .limit(3); // Ambil 3 program terdekat
+        
         if (error) throw error;
-
-        eventsLoaderEl.style.display = 'none';
-
-        if (data.length === 0) {
-            eventsContainerEl.innerHTML = '<p class="text-center text-gray-600 col-span-full">Belum ada program yang akan datang.</p>';
-            return;
-        }
-
-        let eventsHTML = '';
-        data.forEach((event, index) => {
-            eventsHTML += `
-                <div class="fade-in-element bg-white rounded-2xl overflow-hidden shadow-lg flex flex-col text-center transition-transform duration-300 hover:-translate-y-2" style="animation-delay: ${index * 150}ms;">
-                    <img 
-                        src="${event.poster_url || 'https://placehold.co/600x400/DCFCE7/16A34A?text=Program'}" 
-                        alt="Poster ${event.title}" 
-                        class="w-full h-56 object-cover"
-                        onerror="this.onerror=null;this.src='https://placehold.co/600x400/f0f0f0/333?text=Poster+Error';"
-                    />
-                    <div class="p-8 flex flex-col flex-grow">
-                        <h3 class="text-xl font-bold text-sankara-dark mb-2">${event.title}</h3>
-                        <p class="text-gray-600 mb-6 flex-grow">${event.description || ''}</p>
-                        <a 
-                            href="${event.registration_link}" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            class="mt-auto inline-block self-center bg-sankara-green-light text-sankara-green-dark font-semibold py-2 px-6 rounded-full hover:bg-sankara-green hover:text-white transition-all duration-300"
-                        >
-                            Pelajari Lebih Lanjut
-                        </a>
+        
+        container.innerHTML = data.map(event => {
+            const daysRemainingText = calculateDaysRemaining(event.start_date);
+            return `
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+                <img src="${event.image_url || 'https://placehold.co/600x400/dcfce7/1e293b?text=Sankara'}" alt="${event.title}" class="w-full h-48 object-cover">
+                <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="text-xl font-bold text-sankara-dark mb-2 line-clamp-2">${event.title}</h3>
+                     <div class="flex items-center text-sm text-yellow-600 font-semibold mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span>${daysRemainingText}</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <span>${event.location || 'Online'}</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">${event.description}</p>
+                    <div class="mt-auto pt-4 border-t border-gray-100">
+                        <a href="program.html" class="font-semibold text-sankara-green-dark hover:underline">Lihat Selengkapnya &rarr;</a>
                     </div>
                 </div>
-            `;
-        });
-        eventsContainerEl.innerHTML = eventsHTML;
-    } catch (err) {
-        eventsLoaderEl.textContent = `Gagal memuat data: ${err.message}`;
-        eventsLoaderEl.classList.add('text-red-500');
-    }
-}
+            </div>
+        `}).join('');
 
-// --- INITIAL LOAD ---
+    } catch(error) {
+        container.innerHTML = '<p class="text-center text-red-500 col-span-full">Gagal memuat program.</p>';
+    }
+};
+
+const fetchAndRenderNews = async () => {
+    const container = document.getElementById('news-container');
+    if (!container) return;
+    container.innerHTML = '<p class="text-center col-span-full">Memuat berita...</p>';
+
+    try {
+        const { data, error } = await supabase
+            .from('news')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(3); // Ambil 3 berita terbaru
+
+        if (error) throw error;
+
+        container.innerHTML = data.map(article => `
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                <img src="${article.image_url || 'https://placehold.co/600x400/dcfce7/1e293b?text=Berita'}" alt="${article.title}" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-sankara-dark mb-2">${article.title}</h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">${article.content || ''}</p>
+                    <a href="berita.html" class="font-semibold text-sankara-green-dark hover:underline">Baca Selengkapnya &rarr;</a>
+                </div>
+            </div>
+        `).join('');
+    } catch(error) {
+        container.innerHTML = '<p class="text-center text-red-500 col-span-full">Gagal memuat berita.</p>';
+    }
+};
+
+// --- FUNGSI MEMUAT FOOTER ---
+const setupFooter = () => {
+    const footer = document.getElementById('contact');
+    if (!footer) return;
+    footer.innerHTML = `
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">SANKARA</h3>
+                    <p class="text-gray-400 text-sm">Sebuah platform yang didedikasikan untuk menghubungkan kebaikan dan menciptakan perubahan positif.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Tautan Cepat</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="tentang.html" class="text-gray-400 hover:text-white">Tentang Kami</a></li>
+                        <li><a href="program.html" class="text-gray-400 hover:text-white">Program</a></li>
+                        <li><a href="berita.html" class="text-gray-400 hover:text-white">Berita</a></li>
+                        <li><a href="mitra.html" class="text-gray-400 hover:text-white">Mitra</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Hubungi Kami</h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 mr-3 mt-1 text-sankara-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span>Jl. Kebaikan No. 123, Jakarta</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-sankara-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span>info@sankara.org</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Ikuti Kami</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-sankara-green"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path></svg></a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-sankara-green"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.148 2 12.315 2zM8 12a4 4 0 118 0 4 4 0 01-8 0zm4-6a6 6 0 100 12 6 6 0 000-12z"></path></svg></a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-sankara-green"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.78 22 12 22 12s0 3.22-.418 4.814a2.504 2.504 0 01-1.768 1.768C18.39 19 12 19 12 19s-6.39 0-7.814-.418a2.504 2.504 0 01-1.768-1.768C2.002 15.22 2 12 2 12s0-3.22.418-4.814a2.504 2.504 0 011.768-1.768C5.61 5 12 5 12 5s6.39 0 7.812.418zM9.75 15.5V8.5l6 3.5-6 3.5z"></path></svg></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-gray-700 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2024 Sankara. Seluruh Hak Cipta.</p>
+            </div>
+        </div>
+    `;
+};
+
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    fetchAboutContent();
-    fetchActiveEvents();
+    setupAuthUI();
+    setupUIInteractions();
+    setupFooter();
+    fetchAndRenderPrograms();
+    fetchAndRenderNews();
 });
+
