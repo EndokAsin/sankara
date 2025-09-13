@@ -41,7 +41,11 @@ const setupAuthUI = async () => {
     if (currentUser) {
         // --- Tampilan jika SUDAH LOGIN ---
         authButtonsContainer.innerHTML = `
-            <span class="text-sm hidden lg:block mr-4">Hi, ${session.user.user_metadata.full_name?.split(' ')[0] || currentUser.email.split('@')[0]}</span>
+            <a href="profile.html" title="Profil Saya" class="p-2 rounded-full hover:bg-gray-200/50 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-sankara-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </a>
             <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-red-600 transition-colors">
                 Logout
             </button>
@@ -52,6 +56,7 @@ const setupAuthUI = async () => {
         });
 
         mobileMenuContainer.innerHTML += `
+            <a href="profile.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Profil Saya</a>
             <button id="mobile-logout-button" class="block w-full text-left py-2 px-4 text-sm bg-red-500 text-white text-center rounded-md m-2">Logout</button>
         `;
         document.getElementById('mobile-logout-button').addEventListener('click', async () => {
