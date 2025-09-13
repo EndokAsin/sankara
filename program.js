@@ -342,7 +342,6 @@ const setupTabListeners = () => {
         });
     }
 }
-
 document.addEventListener('click', (e) => {
     if (e.target && e.target.classList.contains('view-detail-btn')) {
         const eventId = e.target.dataset.eventId;
