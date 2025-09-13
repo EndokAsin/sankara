@@ -1,223 +1,42 @@
-// --- Koneksi ke Supabase ---
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-const SUPABASE_URL = 'https://vfdxtujestpslpsvdkwh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
-const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Konfigurasi Supabase
+const supabaseUrl = 'https://vfdxtujestpslpsvdkwh.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUBw7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// --- State Management ---
-let allPrograms = [];
+let currentUser = null;
 
-// --- Elemen DOM ---
-const loader = document.getElementById('events-loader');
-const upcomingContent = document.getElementById('content-upcoming');
-const closedContent = document.getElementById('content-closed');
-const tabUpcoming = document.getElementById('tab-upcoming');
-const tabClosed = document.getElementById('tab-closed');
-const detailModal = document.getElementById('detail-modal');
-const detailModalContent = document.getElementById('detail-modal-content');
-const registerModal = document.getElementById('register-modal');
-const registerModalContent = document.getElementById('register-modal-content');
-
-// --- Fungsi Helper ---
-const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount || 0);
-const formatDate = (dateString, timeString) => {
-    if (!dateString || !timeString) return 'Waktu belum ditentukan';
-    const date = new Date(`${dateString}T${timeString}`);
-    return date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ` Pukul ${timeString.substring(0, 5)}`;
+// --- UTILITIES ---
+const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
 };
 
-// --- Fungsi Render ---
-function renderPrograms(programs, container) {
-    if (programs.length === 0) {
-        container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Tidak ada program di kategori ini.</p>';
-        return;
-    }
-    container.innerHTML = programs.map(program => `
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
-            <img src="${program.poster_url}" alt="${program.title}" class="w-full h-48 object-cover" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Gambar'"/>
-            <div class="p-6">
-                <span class="text-sm text-sankara-green-dark font-semibold">${program.category || 'Umum'}</span>
-                <h3 class="text-xl font-bold mt-2 text-sankara-dark">${program.title}</h3>
-                <p class="text-gray-600 mt-2 text-sm">${program.location}</p>
-                <div class="mt-4 border-t pt-4">
-                     <button class="detail-button w-full bg-sankara-dark text-white font-bold py-2 px-4 rounded-lg hover:bg-black transition-colors" data-id="${program.id}">
-                        Lihat Detail
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
+// --- AUTHENTICATION ---
+const setupAuthUI = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    currentUser = session?.user || null;
 
-function renderProgramDetails(program) {
-    detailModalContent.innerHTML = `
-        <div class="p-6 md:p-8 relative">
-             <button id="close-detail-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl">&times;</button>
-             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Left Column (Image & Main Info) -->
-                <div class="md:col-span-1">
-                    <img src="${program.poster_url}" alt="${program.title}" class="rounded-lg shadow-md w-full mb-6">
-                    <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-2">${program.activity_type}</span>
-                    <h1 class="text-2xl font-bold text-sankara-dark">${program.title}</h1>
-                    <p class="text-sm text-gray-500 mt-1">Dibuat oleh: <span class="font-semibold">${program.created_by}</span></p>
-                </div>
+    const authButtonsContainer = document.getElementById('auth-buttons');
+    const mobileMenuContainer = document.getElementById('mobile-menu');
 
-                <!-- Right Column (Details) -->
-                <div class="md:col-span-2">
-                    <h2 class="text-lg font-semibold border-b pb-2 mb-4">Detail</h2>
-                    <p class="text-gray-700 mb-6">${program.description}</p>
-                    
-                    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
-                        <div><strong class="block text-gray-500">Kategori</strong> ${program.category}</div>
-                        <div><strong class="block text-gray-500">Kuota</strong> ${program.quota} Orang</div>
-                        <div><strong class="block text-gray-500">Waktu</strong> ${formatDate(program.start_date, program.start_time)}</div>
-                        <div><strong class="block text-gray-500">Lokasi</strong> ${program.location}</div>
-                    </div>
+    if (currentUser) {
+        // Desktop Menu
+        authButtonsContainer.innerHTML = `
+            <span class="text-sm hidden lg:block">Hi, ${session.user.user_metadata.full_name?.split(' ')[0] || currentUser.email.split('@')[0]}</span>
+            <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-6 rounded-full hover:bg-red-600 transition-all duration-300 shadow-md">
+                Logout
+            </button>
+        `;
+        document.getElementById('logout-button').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.reload();
+        });
 
-                    <h3 class="text-md font-semibold mb-2">Tugas Volunteer</h3>
-                    <ul class="list-disc list-inside text-gray-700 text-sm mb-4 space-y-1">${(program.tasks || '').split('\n').map(t => `<li>${t}</li>`).join('')}</ul>
-
-                    <h3 class="text-md font-semibold mb-2">Kriteria</h3>
-                    <ul class="list-disc list-inside text-gray-700 text-sm mb-6 space-y-1">${(program.criteria || '').split('\n').map(c => `<li>${c}</li>`).join('')}</ul>
-                    
-                    ${program.doc_url ? `<a href="${program.doc_url}" target="_blank" class="text-green-600 hover:underline text-sm">Lihat Dokumen Tambahan</a>` : ''}
-                </div>
-             </div>
-             <div class="border-t mt-6 pt-6 flex flex-col md:flex-row justify-between items-center">
-                <div class="text-2xl font-bold text-sankara-dark mb-4 md:mb-0">${formatCurrency(program.fee)}</div>
-                <button id="show-register-modal-button" class="w-full md:w-auto bg-sankara-green-dark text-white font-bold py-3 px-8 rounded-lg hover:bg-sankara-green-dark/90 transition-all">Jadi Volunteer</button>
-             </div>
-        </div>
-    `;
-    showModal(detailModal);
-
-    document.getElementById('close-detail-modal').addEventListener('click', () => hideModal(detailModal));
-    document.getElementById('show-register-modal-button').addEventListener('click', () => renderRegistrationForm(program));
-}
-
-function renderRegistrationForm(program) {
-    hideModal(detailModal);
-    registerModalContent.innerHTML = `
-         <div class="p-8 relative">
-            <button id="close-register-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-3xl">&times;</button>
-            <h2 class="text-xl font-bold text-center mb-2">Jadi Volunteer</h2>
-            <p class="text-center text-sm text-gray-600 mb-6">${program.title}</p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="text-sm font-medium">Nomor Ponsel *</label>
-                    <div class="flex items-center mt-1">
-                        <span class="inline-flex items-center px-3 border border-r-0 rounded-l-md bg-gray-50 text-gray-500">+62</span>
-                        <input type="tel" placeholder="8123456789" class="w-full px-4 py-2 border rounded-r-lg">
-                    </div>
-                </div>
-                <div>
-                    <label class="text-sm font-medium">Metode Pembayaran</label>
-                    <select class="mt-1 w-full px-4 py-2 border rounded-lg bg-white">
-                        <option>Pilih metode pembayaran</option>
-                        <option>Transfer Bank</option>
-                        <option>E-Wallet</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="mt-6 border-t pt-4 space-y-2 text-sm">
-                <div class="flex justify-between"><span class="text-gray-600">Biaya</span> <strong>${formatCurrency(program.fee)}</strong></div>
-                <div class="flex justify-between"><span class="text-gray-600">Biaya Admin</span> <strong>${formatCurrency(0)}</strong></div>
-                <div class="flex justify-between font-bold text-base"><span class="text-sankara-dark">Total</span> <span>${formatCurrency(program.fee)}</span></div>
-            </div>
-
-            <div class="mt-6">
-                <button class="w-full bg-sankara-green-dark text-white font-bold py-3 px-4 rounded-lg hover:bg-sankara-green-dark/90">Lanjut</button>
-            </div>
-         </div>
-    `;
-    showModal(registerModal);
-    document.getElementById('close-register-modal').addEventListener('click', () => hideModal(registerModal));
-}
-
-// --- Fungsi Logika ---
-async function fetchAndRenderPrograms() {
-    try {
-        const { data, error } = await db.from('events').select('*').order('start_date', { ascending: true });
-        if (error) throw error;
-        allPrograms = data;
-
-        const today = new Date().toISOString().split('T')[0];
-        const upcoming = allPrograms.filter(p => p.start_date >= today);
-        const closed = allPrograms.filter(p => p.start_date < today).reverse();
-
-        renderPrograms(upcoming, upcomingContent);
-        renderPrograms(closed, closedContent);
-
-    } catch (error) {
-        console.error("Error fetching programs:", error);
-        upcomingContent.innerHTML = `<p class="text-red-500 col-span-full text-center">Gagal memuat data program. Error: ${error.message}</p>`;
-    } finally {
-        loader.style.display = 'none';
-    }
-}
-
-function switchTab(activeTab) {
-    if (activeTab === 'upcoming') {
-        tabUpcoming.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark', 'font-semibold');
-        tabUpcoming.classList.remove('border-transparent', 'text-gray-500');
-        tabClosed.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark', 'font-semibold');
-        tabClosed.classList.add('border-transparent', 'text-gray-500');
-
-        upcomingContent.classList.remove('hidden');
-        upcomingContent.classList.add('grid');
-        closedContent.classList.add('hidden');
-        closedContent.classList.remove('grid');
-    } else {
-        tabClosed.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark', 'font-semibold');
-        tabClosed.classList.remove('border-transparent', 'text-gray-500');
-        tabUpcoming.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark', 'font-semibold');
-        tabUpcoming.classList.add('border-transparent', 'text-gray-500');
-        
-        upcomingContent.classList.add('hidden');
-        upcomingContent.classList.remove('grid');
-        closedContent.classList.remove('hidden');
-        closedContent.classList.add('grid');
-    }
-}
-
-function showModal(modalElement) {
-    modalElement.classList.remove('hidden');
-    setTimeout(() => {
-        modalElement.classList.remove('opacity-0');
-        modalElement.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
-    }, 10);
-}
-
-function hideModal(modalElement) {
-    modalElement.classList.add('opacity-0');
-    modalElement.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
-    setTimeout(() => modalElement.classList.add('hidden'), 300);
-}
-
-function handleDetailClick(e) {
-    const detailButton = e.target.closest('.detail-button');
-    if (detailButton) {
-        const programId = detailButton.dataset.id;
-        const program = allPrograms.find(p => p.id == programId);
-        if (program) {
-            renderProgramDetails(program);
-        }
-    }
-}
-
-// --- Menu Mobile & Dropdown ---
-document.addEventListener('DOMContentLoaded', () => {
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const aboutDropdownButton = document.getElementById('about-dropdown-button');
-    const aboutDropdownMenu = document.getElementById('about-dropdown-menu');
-    const aboutDropdownContainer = document.getElementById('about-dropdown-container');
-
-    if (mobileMenu) {
-        mobileMenu.innerHTML = `
+        // Mobile Menu
+        mobileMenuContainer.innerHTML = `
             <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
             <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
             <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
@@ -225,42 +44,305 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
             <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
             <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
-            <a href="index.html#donate" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Donasi Sekarang</a>
+            <button id="mobile-logout-button" class="block w-full text-left py-2 px-4 text-sm bg-red-500 text-white text-center rounded-md m-2">Logout</button>
+        `;
+        document.getElementById('mobile-logout-button').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.reload();
+        });
+
+    } else {
+        // Desktop Menu
+        authButtonsContainer.innerHTML = `
+            <a href="auth.html" class="text-sankara-dark font-medium hover:text-sankara-green-dark transition-colors">Login</a>
+            <a href="auth.html" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md">
+                Jadi Relawan
+            </a>
+        `;
+
+        // Mobile Menu
+        mobileMenuContainer.innerHTML = `
+            <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+            <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+            <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
+            <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
+            <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
+            <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
+            <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
+            <a href="auth.html" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Login / Daftar</a>
         `;
     }
+};
 
-    if (mobileMenuButton) {
-        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-    }
-    
-    if (aboutDropdownButton) {
-        aboutDropdownButton.addEventListener('click', () => aboutDropdownMenu.classList.toggle('hidden'));
-    }
 
+// --- UI INTERACTIONS (Dropdowns, Mobile Menu) ---
+const setupUIInteractions = () => {
+    const aboutDropdownButton = document.getElementById('about-dropdown-button');
+    const aboutDropdownMenu = document.getElementById('about-dropdown-menu');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    aboutDropdownButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        aboutDropdownMenu.classList.toggle('hidden');
+    });
+
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
     document.addEventListener('click', (event) => {
-        if (aboutDropdownContainer && !aboutDropdownContainer.contains(event.target)) {
+        const container = document.getElementById('about-dropdown-container');
+        if (container && !container.contains(event.target)) {
             aboutDropdownMenu.classList.add('hidden');
         }
     });
+};
 
-    // --- Event Listeners ---
-    tabUpcoming.addEventListener('click', () => switchTab('upcoming'));
-    tabClosed.addEventListener('click', () => switchTab('closed'));
-    document.body.addEventListener('click', handleDetailClick);
+// --- PROGRAM LOGIC ---
+const eventsLoader = document.getElementById('events-loader');
+const upcomingContainer = document.getElementById('content-upcoming');
+const closedContainer = document.getElementById('content-closed');
+const tabUpcoming = document.getElementById('tab-upcoming');
+const tabClosed = document.getElementById('tab-closed');
+const detailModal = document.getElementById('detail-modal');
+const detailModalContent = document.getElementById('detail-modal-content');
+const registerModal = document.getElementById('register-modal');
+const registerModalContent = document.getElementById('register-modal-content');
+
+let allPrograms = [];
+
+const renderPrograms = (filter) => {
+    const container = filter === 'upcoming' ? upcomingContainer : closedContainer;
+    container.innerHTML = '';
+    const now = new Date();
+
+    const filteredPrograms = allPrograms.filter(event => {
+        const eventDate = new Date(event.start_date);
+        return filter === 'upcoming' ? eventDate >= now : eventDate < now;
+    });
+
+    if (filteredPrograms.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-500 col-span-full">Tidak ada program yang tersedia saat ini.</p>`;
+        return;
+    }
+
+    filteredPrograms.forEach(event => {
+        const card = `
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                <img src="${event.image_url || 'https://placehold.co/600x400/dcfce7/1e293b?text=Sankara'}" alt="${event.title}" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <p class="text-sm text-gray-500 mb-1">${event.category || 'Umum'}</p>
+                    <h3 class="text-xl font-bold text-sankara-dark mb-2 line-clamp-2">${event.title}</h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">${event.description}</p>
+                    <div class="flex justify-between items-center">
+                         <p class="text-sm font-semibold text-sankara-green-dark">Rp ${new Intl.NumberFormat('id-ID').format(event.fee || 0)}</p>
+                        <button data-event-id="${event.id}" class="view-detail-btn bg-sankara-dark text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-black transition-colors">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += card;
+    });
+};
+
+const fetchAndRenderPrograms = async () => {
+    eventsLoader.style.display = 'block';
+    upcomingContainer.innerHTML = '';
+    closedContainer.innerHTML = '';
+
+    try {
+        const { data, error } = await supabase
+            .from('events')
+            .select('*')
+            .order('start_date', { ascending: true });
+
+        if (error) throw error;
+        
+        allPrograms = data;
+        renderPrograms('upcoming'); // Initial render
+        renderPrograms('closed'); // Pre-render closed tab
+        
+        // Initially show upcoming tab
+        upcomingContainer.classList.remove('hidden');
+        closedContainer.classList.add('hidden');
+        tabUpcoming.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
+        tabClosed.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
+        tabClosed.classList.add('border-transparent', 'text-gray-500');
+
+
+    } catch (error) {
+        console.error('Error fetching programs:', error);
+        upcomingContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Gagal memuat program. Coba lagi nanti.</p>`;
+    } finally {
+        eventsLoader.style.display = 'none';
+    }
+};
+
+const openDetailModal = (eventId) => {
+    const event = allPrograms.find(e => e.id === eventId);
+    if (!event) return;
+
+    detailModalContent.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+            <h2 class="text-2xl font-bold text-sankara-dark">${event.title}</h2>
+            <button id="close-detail-modal" class="text-gray-500 text-3xl leading-none hover:text-gray-800">&times;</button>
+        </div>
+        <div class="space-y-4 text-gray-700">
+            <p><strong class="font-semibold text-gray-800">Jenis Kegiatan:</strong> ${event.activity_type || 'N/A'}</p>
+            <p><strong class="font-semibold text-gray-800">Dibuat oleh:</strong> ${event.organizer || 'Sankara'}</p>
+            <p><strong class="font-semibold text-gray-800">Deskripsi:</strong> ${event.description || 'Tidak ada deskripsi.'}</p>
+            <hr class="my-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <p><strong class="font-semibold text-gray-800">Kategori:</strong> ${event.category || 'N/A'}</p>
+                <p><strong class="font-semibold text-gray-800">Kuota Tersedia:</strong> ${event.quota || 'N/A'} Orang</p>
+                <p><strong class="font-semibold text-gray-800">Waktu:</strong> ${formatDate(event.start_date)}</p>
+                <p><strong class="font-semibold text-gray-800">Lokasi:</strong> ${event.location || 'N/A'}</p>
+            </div>
+            <div>
+                <strong class="font-semibold text-gray-800 block mb-2">Tugas Relawan:</strong>
+                <ul class="list-disc list-inside space-y-1 pl-2">
+                    ${(event.tasks || '').split('\n').map(task => `<li>${task}</li>`).join('')}
+                </ul>
+            </div>
+            <div>
+                <strong class="font-semibold text-gray-800 block mb-2">Kriteria Relawan:</strong>
+                <ul class="list-disc list-inside space-y-1 pl-2">
+                     ${(event.criteria || '').split('\n').map(c => `<li>${c}</li>`).join('')}
+                </ul>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button data-event-id="${event.id}" id="open-register-modal-btn" class="bg-sankara-green-dark text-white font-bold py-3 px-6 rounded-lg hover:bg-sankara-green-dark/90 transition-all">
+                    Jadi Volunteer
+                </button>
+            </div>
+        </div>
+    `;
+    detailModal.classList.remove('hidden');
+
+    document.getElementById('close-detail-modal').addEventListener('click', () => detailModal.classList.add('hidden'));
+    document.getElementById('open-register-modal-btn').addEventListener('click', () => openRegisterModal(event.id));
+};
+
+const openRegisterModal = (eventId) => {
+    if (!currentUser) {
+        alert("Anda harus login terlebih dahulu untuk mendaftar.");
+        window.location.href = 'auth.html';
+        return;
+    }
     
-    [detailModal, registerModal].forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) hideModal(modal);
-        });
-    });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            hideModal(detailModal);
-            hideModal(registerModal);
-        }
-    });
+    const event = allPrograms.find(e => e.id === eventId);
+    if (!event) return;
 
-    // --- Inisialisasi ---
+    detailModal.classList.add('hidden'); // Hide detail modal first
+
+    registerModalContent.innerHTML = `
+         <div class="flex justify-between items-start mb-4">
+            <h2 class="text-xl font-bold text-sankara-dark">Pendaftaran Volunteer</h2>
+            <button id="close-register-modal" class="text-gray-500 text-3xl leading-none hover:text-gray-800">&times;</button>
+        </div>
+        <p class="text-gray-600 mb-4">Anda akan mendaftar untuk: <strong class="text-sankara-dark">${event.title}</strong></p>
+        
+        <form id="registration-form" class="space-y-4">
+             <div>
+                <label for="phone-number" class="block text-sm font-medium text-gray-700">Nomor Ponsel Aktif *</label>
+                <div class="relative mt-1">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <span class="text-gray-500 sm:text-sm">+62</span>
+                    </div>
+                    <input type="tel" id="phone-number" required class="block w-full pl-12 pr-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-sankara-green-dark focus:border-sankara-green-dark" placeholder="8123456789">
+                </div>
+            </div>
+            <div class="pt-4 border-t">
+                <h3 class="font-semibold text-lg mb-2">Rincian Pembayaran</h3>
+                <div class="flex justify-between text-gray-600">
+                    <span>Biaya Program</span>
+                    <span>Rp ${new Intl.NumberFormat('id-ID').format(event.fee || 0)}</span>
+                </div>
+                 <div class="flex justify-between text-gray-600">
+                    <span>Biaya Admin</span>
+                    <span>Rp 0</span>
+                </div>
+                 <div class="flex justify-between font-bold text-sankara-dark text-lg mt-2">
+                    <span>Total Pembayaran</span>
+                    <span>Rp ${new Intl.NumberFormat('id-ID').format(event.fee || 0)}</span>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-sankara-green-dark text-white font-bold py-3 rounded-lg hover:bg-sankara-green-dark/90 transition-all">
+                Lanjut ke Pembayaran
+            </button>
+        </form>
+    `;
+    registerModal.classList.remove('hidden');
+
+    document.getElementById('close-register-modal').addEventListener('click', () => registerModal.classList.add('hidden'));
+    document.getElementById('registration-form').addEventListener('submit', (e) => handleRegistrationSubmit(e, event.id));
+};
+
+const handleRegistrationSubmit = async (e, eventId) => {
+    e.preventDefault();
+    if (!currentUser) {
+        alert("Sesi Anda telah berakhir. Silakan login kembali.");
+        return;
+    }
+    const registerButton = e.target.querySelector('button[type="submit"]');
+    registerButton.disabled = true;
+    registerButton.textContent = 'Memproses...';
+
+
+    const { data, error } = await supabase
+        .from('event_registrations')
+        .insert([
+            { user_id: currentUser.id, event_id: eventId }
+        ]);
+
+    if (error) {
+        console.error("Error saving registration:", error);
+        alert(`Gagal mendaftar: ${error.message}. Mungkin Anda sudah terdaftar di program ini.`);
+        registerButton.disabled = false;
+        registerButton.textContent = 'Lanjut ke Pembayaran';
+    } else {
+        alert("Pendaftaran berhasil! Terima kasih telah bergabung. Detail selanjutnya akan diinformasikan oleh panitia.");
+        registerModal.classList.add('hidden');
+    }
+};
+
+// --- EVENT LISTENERS ---
+tabUpcoming.addEventListener('click', () => {
+    upcomingContainer.classList.remove('hidden');
+    closedContainer.classList.add('hidden');
+    tabUpcoming.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
+    tabClosed.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
+    tabClosed.classList.add('border-transparent', 'text-gray-500');
+});
+
+tabClosed.addEventListener('click', () => {
+    upcomingContainer.classList.add('hidden');
+    closedContainer.classList.remove('hidden');
+    tabUpcoming.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
+    tabUpcoming.classList.add('border-transparent', 'text-gray-500');
+    tabClosed.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
+});
+
+document.addEventListener('click', (e) => {
+    if (e.target && e.target.classList.contains('view-detail-btn')) {
+        const eventId = e.target.dataset.eventId;
+        openDetailModal(eventId);
+    }
+    // Close modal if clicking on backdrop
+    if (e.target === detailModal || e.target === registerModal) {
+        detailModal.classList.add('hidden');
+        registerModal.classList.add('hidden');
+    }
+});
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    setupAuthUI();
+    setupUIInteractions();
     fetchAndRenderPrograms();
 });
 
