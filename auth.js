@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.classList.add('hidden');
         
         formTitle.textContent = 'Masuk ke Akun Anda';
-        formSubtitle.textContent = 'Dapatkan link login instan ke email Anda.';
+        formSubtitle.textContent = 'Selamat datang kembali! Silakan masuk.';
         notification.classList.add('hidden');
     });
 
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.classList.add('hidden');
 
         formTitle.textContent = 'Buat Akun Baru';
-        formSubtitle.textContent = 'Daftar dan dapatkan link verifikasi di email Anda.';
+        formSubtitle.textContent = 'Lengkapi data diri Anda untuk menjadi relawan.';
         notification.classList.add('hidden');
     });
 
@@ -59,21 +59,25 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
         const submitButton = loginForm.querySelector('button[type="submit"]');
 
         submitButton.disabled = true;
-        submitButton.textContent = 'Mengirim...';
+        submitButton.textContent = 'Memproses...';
         notification.classList.add('hidden');
 
         try {
-            const { error } = await supabase.auth.signInWithOtp({ email });
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
-            showNotification('Link login telah dikirim! Silakan periksa email Anda.');
+            
+            // Jika berhasil, Supabase akan set session dan kita bisa redirect
+            window.location.href = 'index.html';
+
         } catch (error) {
-            showNotification(`Gagal: ${error.message}`, 'error');
+            showNotification(`Gagal masuk: ${error.message}`, 'error');
         } finally {
             submitButton.disabled = false;
-            submitButton.textContent = 'Kirim Link Login';
+            submitButton.textContent = 'Masuk';
         }
     });
 
@@ -81,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
         const fullName = document.getElementById('register-fullname').value;
         const submitButton = registerForm.querySelector('button[type="submit"]');
 
@@ -89,36 +94,30 @@ document.addEventListener('DOMContentLoaded', () => {
         notification.classList.add('hidden');
         
         try {
-            const { error } = await supabase.auth.signInWithOtp({
+            const { data, error } = await supabase.auth.signUp({
                 email: email,
+                password: password,
                 options: {
                     data: {
                         full_name: fullName,
-                    },
-                    emailRedirectTo: window.location.origin,
-                },
+                    }
+                }
             });
+
             if (error) throw error;
-            showNotification('Link verifikasi telah dikirim! Silakan periksa email Anda untuk menyelesaikan pendaftaran.');
-        } catch (error) {
-            let errorMessage = `Gagal mendaftar: ${error.message}`;
-            if (error.message.toLowerCase().includes('signups not allowed')) {
-                errorMessage = 'Gagal: Pendaftaran pengguna baru tidak diaktifkan.';
+
+            // Jika pendaftaran berhasil tapi butuh verifikasi email
+            if (data.user && data.user.identities && data.user.identities.length === 0) {
+                 showNotification('Gagal: Pengguna sudah terdaftar tetapi belum terverifikasi. Silakan cek email Anda atau coba login.', 'error');
+            } else {
+                 showNotification('Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi akun.');
             }
-            showNotification(errorMessage, 'error');
+           
+        } catch (error) {
+            showNotification(`Gagal mendaftar: ${error.message}`, 'error');
         } finally {
             submitButton.disabled = false;
-            submitButton.textContent = 'Daftar & Kirim Link Verifikasi';
-        }
-    });
-    
-    // Cek jika pengguna baru saja login dari magic link
-    supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-            showNotification('Login berhasil! Anda akan diarahkan...');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
+            submitButton.textContent = 'Daftar Akun Baru';
         }
     });
 });
