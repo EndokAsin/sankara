@@ -36,8 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // === Fungsi Helper ===
     const showNotification = (message, type = 'success') => {
         notification.textContent = message;
-        notification.className = 'p-4 text-sm rounded-lg mb-4';
-        notification.classList.add(type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700');
+        notification.className = 'p-4 text-sm rounded-lg mb-4'; // Reset classes first
+        if (type === 'success') {
+            notification.classList.add('bg-green-100', 'text-green-700');
+        } else {
+            notification.classList.add('bg-red-100', 'text-red-700');
+        }
     };
 
     const setupOtpInputListeners = (container) => {
