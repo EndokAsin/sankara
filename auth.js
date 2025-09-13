@@ -1,98 +1,61 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-// Konfigurasi Supabase (Ganti dengan kredensial Anda)
+// Konfigurasi Supabase
 const supabaseUrl = 'https://vfdxtujestpslpsvdkwh.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUBw7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Elemen DOM
-const loginForm = document.getElementById('login-form');
-const registerForm = document.getElementById('register-form');
-const toggleButton = document.getElementById('toggle-button');
-const toggleText = document.getElementById('toggle-text');
-const messageEl = document.getElementById('message-el');
-const formTitle = document.getElementById('form-title');
-const formSubtitle = document.getElementById('form-subtitle');
+const authForm = document.getElementById('auth-form');
+const notification = document.getElementById('notification');
 
-let isLogin = true;
-
-// Fungsi untuk menampilkan pesan
-const showMessage = (message, isError = false) => {
-    messageEl.textContent = message;
-    messageEl.className = `text-center mb-4 text-sm ${isError ? 'text-red-600' : 'text-green-600'}`;
-};
-
-// Fungsi untuk beralih antara login dan registrasi
-const toggleForms = () => {
-    isLogin = !isLogin;
-    messageEl.textContent = ''; // Clear message on toggle
-    if (isLogin) {
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-        formTitle.textContent = 'Selamat Datang Kembali';
-        formSubtitle.textContent = 'Masuk untuk melanjutkan dan menjadi bagian dari perubahan.';
-        toggleText.innerHTML = 'Belum punya akun? <button id="toggle-button" class="font-medium text-sankara-green-dark hover:underline">Daftar sekarang</button>';
-    } else {
-        loginForm.classList.add('hidden');
-        registerForm.classList.remove('hidden');
-        formTitle.textContent = 'Bergabung dengan Sankara';
-        formSubtitle.textContent = 'Buat akun baru untuk memulai perjalanan kerelawanan Anda.';
-        toggleText.innerHTML = 'Sudah punya akun? <button id="toggle-button" class="font-medium text-sankara-green-dark hover:underline">Masuk di sini</button>';
-    }
-    // Re-attach event listener to the new button
-    document.getElementById('toggle-button').addEventListener('click', toggleForms);
-};
-
-// Event listener untuk tombol toggle
-toggleButton.addEventListener('click', toggleForms);
-
-// Event listener untuk form login
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-    });
-
-    if (error) {
-        showMessage(`Error: ${error.message}`, true);
-    } else {
-        showMessage('Login berhasil! Anda akan diarahkan...', false);
+// Cek apakah pengguna baru saja login dari magic link
+supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+        // Jika berhasil login, arahkan ke halaman utama setelah beberapa detik
+        notification.classList.remove('hidden', 'bg-red-100', 'text-red-700');
+        notification.classList.add('bg-green-100', 'text-green-700');
+        notification.textContent = 'Login berhasil! Anda akan diarahkan ke halaman utama.';
         setTimeout(() => {
-            window.location.href = 'index.html'; // Arahkan ke halaman utama setelah login
-        }, 1500);
+            window.location.href = 'index.html';
+        }, 2000);
     }
 });
 
-// Event listener untuk form registrasi
-registerForm.addEventListener('submit', async (e) => {
+
+authForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const fullName = document.getElementById('register-fullname').value;
-    const phone = document.getElementById('register-phone').value;
-    const email = document.getElementById('register-email').value;
-    const password = document.getElementById('register-password').value;
+    const email = document.getElementById('email-address').value;
+    const submitButton = authForm.querySelector('button[type="submit"]');
 
-    const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-            data: {
-                full_name: fullName,
-                phone_number: phone,
-            }
-        }
-    });
+    submitButton.disabled = true;
+    submitButton.textContent = 'Mengirim...';
+    notification.classList.add('hidden');
 
-    if (error) {
-        showMessage(`Error: ${error.message}`, true);
-    } else {
-        showMessage('Registrasi berhasil! Silakan cek email Anda untuk verifikasi.', false);
-        loginForm.reset();
-        registerForm.reset();
-        // Optionally toggle back to login form after successful registration
-        setTimeout(toggleForms, 2000); 
+    try {
+        const { error } = await supabase.auth.signInWithOtp({
+            email: email,
+            options: {
+                // Halaman tujuan setelah user klik link di email
+                emailRedirectTo: window.location.origin, 
+            },
+        });
+
+        if (error) throw error;
+
+        // Tampilkan pesan sukses
+        notification.classList.remove('hidden', 'bg-red-100', 'text-red-700');
+        notification.classList.add('bg-green-100', 'text-green-700');
+        notification.textContent = 'Link login telah dikirim! Silakan periksa email Anda.';
+
+    } catch (error) {
+        console.error('Error sending magic link:', error);
+        // Tampilkan pesan error
+        notification.classList.remove('hidden', 'bg-green-100', 'text-green-700');
+        notification.classList.add('bg-red-100', 'text-red-700');
+        notification.textContent = `Gagal mengirim link: ${error.message}`;
+
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Kirim Link Login';
     }
 });
