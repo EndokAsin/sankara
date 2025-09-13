@@ -39,10 +39,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error('Error sending magic link:', error);
+                let errorMessage = `Gagal mengirim link: ${error.message}`;
+                // Memberikan pesan yang lebih spesifik jika pendaftaran dinonaktifkan
+                if (error.message.toLowerCase().includes('signups not allowed') || error.message.toLowerCase().includes('sign-ups are disabled')) {
+                    errorMessage = 'Gagal: Pendaftaran pengguna baru tidak diaktifkan di pengaturan proyek.';
+                }
+                
                 // Tampilkan pesan error
                 notification.classList.remove('hidden', 'bg-green-100', 'text-green-700');
                 notification.classList.add('bg-red-100', 'text-red-700');
-                notification.textContent = `Gagal mengirim link: ${error.message}`;
+                notification.textContent = errorMessage;
 
             } finally {
                 submitButton.disabled = false;
