@@ -25,9 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Form Reset Password
   const forgotPasswordLink = document.getElementById('forgot-password-link');
-  const resetPasswordSection = document.getElementById(
-    'reset-password-section'
-  );
+  const resetPasswordSection = document.getElementById('reset-password-section');
   const requestResetForm = document.getElementById('request-reset-form');
   const verifyResetOtpForm = document.getElementById('verify-reset-otp-form');
   const resetOtpInputsContainer = document.getElementById('reset-otp-inputs');
@@ -39,15 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // === Fungsi Helper ===
   const showNotification = (message, type = 'success') => {
     notification.textContent = message;
-    notification.className = 'p-4 text-sm rounded-lg mb-4'; // Reset kelas
-
     if (type === 'success') {
-      notification.classList.add('bg-green-100', 'text-green-700');
+      notification.className =
+        'p-4 text-sm rounded-lg mb-4 bg-green-100 text-green-700';
     } else {
-      notification.classList.add('bg-red-100', 'text-red-700');
+      notification.className =
+        'p-4 text-sm rounded-lg mb-4 bg-red-100 text-red-700';
     }
-
-    notification.classList.remove('hidden'); // Pastikan tampil
   };
 
   const setupOtpInputListeners = (container) => {
@@ -195,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitButton.textContent = 'Mengirim...';
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin, // Diperlukan, meskipun kita pakai OTP
+        redirectTo: window.location.origin,
       });
       if (error) throw error;
       showNotification('Kode reset password telah dikirim ke email Anda.');
@@ -267,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         resetPasswordSection.classList.add('hidden');
         mainFormsContainer.classList.remove('hidden');
-        loginTab.click(); // Pindahkan ke tab login
+        loginTab.click();
       }, 2500);
     } catch (error) {
       showNotification(`Gagal memperbarui password: ${error.message}`, 'error');
