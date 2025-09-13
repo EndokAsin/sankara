@@ -1,9 +1,8 @@
-
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // Konfigurasi Supabase
 const supabaseUrl = 'https://vfdxtujestpslpsvdkwh.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQVIIIzUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -45,11 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const showNotification = (message, type = 'success') => {
         if (!elements.notification) return;
         elements.notification.textContent = message;
+        // Reset kelas terlebih dahulu
         elements.notification.className = 'p-4 text-sm rounded-lg mb-4';
         if (type === 'success') {
-            elements.notification.classList.add('bg-green-100', 'text-green-700');
+            // Tambahkan kelas satu per satu untuk menghindari error
+            elements.notification.classList.add('bg-green-100');
+            elements.notification.classList.add('text-green-700');
         } else {
-            elements.notification.classList.add('bg-red-100', 'text-red-700');
+            elements.notification.classList.add('bg-red-100');
+            elements.notification.classList.add('text-red-700');
         }
     };
 
