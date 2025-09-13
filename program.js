@@ -21,8 +21,13 @@ const setupAuthUI = async () => {
 
     const authButtonsContainer = document.getElementById('auth-buttons');
     const mobileMenuContainer = document.getElementById('mobile-menu');
+    
+    if (!authButtonsContainer || !mobileMenuContainer) {
+        console.error("Elemen UI otentikasi tidak ditemukan. Periksa #auth-buttons dan #mobile-menu di HTML Anda.");
+        return;
+    }
 
-    // Kosongkan menu mobile terlebih dahulu
+    // Selalu mulai dengan mengosongkan menu mobile setelah link dasar
     mobileMenuContainer.innerHTML = `
         <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
         <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
@@ -35,11 +40,8 @@ const setupAuthUI = async () => {
 
     if (currentUser) {
         // --- Tampilan jika SUDAH LOGIN ---
-        // Desktop: Tampilkan tombol "Jadi Relawan" dan "Logout"
         authButtonsContainer.innerHTML = `
-            <a href="auth.html" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md">
-                Jadi Relawan
-            </a>
+            <span class="text-sm hidden lg:block mr-4">Hi, ${session.user.user_metadata.full_name?.split(' ')[0] || currentUser.email.split('@')[0]}</span>
             <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-red-600 transition-colors">
                 Logout
             </button>
@@ -49,9 +51,7 @@ const setupAuthUI = async () => {
             window.location.reload();
         });
 
-        // Mobile: Tambahkan tombol "Jadi Relawan" dan "Logout"
         mobileMenuContainer.innerHTML += `
-            <a href="auth.html" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Jadi Relawan</a>
             <button id="mobile-logout-button" class="block w-full text-left py-2 px-4 text-sm bg-red-500 text-white text-center rounded-md m-2">Logout</button>
         `;
         document.getElementById('mobile-logout-button').addEventListener('click', async () => {
@@ -61,14 +61,12 @@ const setupAuthUI = async () => {
 
     } else {
         // --- Tampilan jika BELUM LOGIN ---
-        // Desktop: Hanya tampilkan tombol "Jadi Relawan"
         authButtonsContainer.innerHTML = `
             <a href="auth.html" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md">
                 Jadi Relawan
             </a>
         `;
 
-        // Mobile: Hanya tambahkan tombol "Jadi Relawan"
         mobileMenuContainer.innerHTML += `
             <a href="auth.html" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Jadi Relawan</a>
         `;
