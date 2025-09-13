@@ -7,273 +7,112 @@ const supabaseAnonKey =
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 document.addEventListener('DOMContentLoaded', () => {
-  // === Elemen UI ===
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
   const notification = document.getElementById('notification');
-  const mainFormsContainer = document.getElementById('main-forms');
+  const toggleToRegister = document.getElementById('toggleToRegister');
+  const toggleToLogin = document.getElementById('toggleToLogin');
 
-  // Form Login & Register
-  const loginTab = document.getElementById('login-tab');
-  const registerTab = document.getElementById('register-tab');
-  const loginForm = document.getElementById('login-form');
-  const registerForm = document.getElementById('register-form');
-
-  // Form OTP Pendaftaran
-  const otpSection = document.getElementById('otp-section');
-  const otpForm = document.getElementById('otp-form');
-  const otpEmailDisplay = document.getElementById('otp-email-display');
-  const otpInputsContainer = document.getElementById('otp-inputs');
-
-  // Form Reset Password
-  const forgotPasswordLink = document.getElementById('forgot-password-link');
-  const resetPasswordSection = document.getElementById('reset-password-section');
-  const requestResetForm = document.getElementById('request-reset-form');
-  const verifyResetOtpForm = document.getElementById('verify-reset-otp-form');
-  const resetOtpInputsContainer = document.getElementById('reset-otp-inputs');
-  const updatePasswordForm = document.getElementById('update-password-form');
-  const backToLoginBtn = document.getElementById('back-to-login-1');
-
-  let userEmailForVerification = ''; // Untuk registrasi & reset password
-
-  // === Fungsi Helper ===
+  // 🔔 Fungsi notifikasi
   const showNotification = (message, type = 'success') => {
     notification.textContent = message;
+
     if (type === 'success') {
-      notification.className =
-        'p-4 text-sm rounded-lg mb-4 bg-green-100 text-green-700';
+      notification.setAttribute(
+        'class',
+        'p-4 text-sm rounded-lg mb-4 bg-green-100 text-green-700'
+      );
     } else {
-      notification.className =
-        'p-4 text-sm rounded-lg mb-4 bg-red-100 text-red-700';
+      notification.setAttribute(
+        'class',
+        'p-4 text-sm rounded-lg mb-4 bg-red-100 text-red-700'
+      );
     }
   };
 
-  const setupOtpInputListeners = (container) => {
-    container.addEventListener('input', (e) => {
-      const target = e.target;
-      const nextInput = target.nextElementSibling;
-      if (nextInput && target.value) {
-        nextInput.focus();
-      }
-    });
-  };
-
-  // === Logika UI ===
-  loginTab.addEventListener('click', () => {
-    loginTab.classList.add('tab-active');
-    registerTab.classList.remove('tab-active');
-    loginForm.classList.remove('hidden');
-    registerForm.classList.add('hidden');
-    notification.classList.add('hidden');
-  });
-
-  registerTab.addEventListener('click', () => {
-    registerTab.classList.add('tab-active');
-    loginTab.classList.remove('tab-active');
-    registerForm.classList.remove('hidden');
+  // 🔄 Toggle ke form Register
+  toggleToRegister?.addEventListener('click', (e) => {
+    e.preventDefault();
     loginForm.classList.add('hidden');
-    notification.classList.add('hidden');
+    registerForm.classList.remove('hidden');
   });
 
-  forgotPasswordLink.addEventListener('click', (e) => {
+  // 🔄 Toggle ke form Login
+  toggleToLogin?.addEventListener('click', (e) => {
     e.preventDefault();
-    mainFormsContainer.classList.add('hidden');
-    resetPasswordSection.classList.remove('hidden');
-    notification.classList.add('hidden');
+    registerForm.classList.add('hidden');
+    loginForm.classList.remove('hidden');
   });
 
-  backToLoginBtn.addEventListener('click', () => {
-    mainFormsContainer.classList.remove('hidden');
-    resetPasswordSection.classList.add('hidden');
-  });
-
-  // === Handler Form ===
-
-  // Handler form login
-  loginForm.addEventListener('submit', async (e) => {
+  // 🔐 Login
+  loginForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const submitButton = loginForm.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = 'Memproses...';
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      window.location.href = 'index.html';
-    } catch (error) {
-      showNotification(`Gagal masuk: ${error.message}`, 'error');
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = 'Masuk';
-    }
-  });
 
-  // Handler form registrasi
-  registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('register-email').value;
-    const password = document.getElementById('register-password').value;
-    const fullName = document.getElementById('register-fullname').value;
-    if (password.length < 6) {
-      showNotification('Password harus memiliki minimal 6 karakter.', 'error');
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    if (!email || !password) {
+      showNotification('Email dan password wajib diisi.', 'error');
       return;
     }
-    const submitButton = registerForm.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = 'Mendaftar...';
+
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } },
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
-      if (error) throw error;
-      if (data.user) {
-        userEmailForVerification = email;
-        otpEmailDisplay.textContent = email;
-        mainFormsContainer.classList.add('hidden');
-        otpSection.classList.remove('hidden');
-        showNotification('Kode verifikasi telah dikirim ke email Anda.');
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showNotification('Login berhasil!', 'success');
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1500);
+      } else {
+        showNotification(data.message || 'Login gagal.', 'error');
       }
-    } catch (error) {
-      showNotification(`Gagal mendaftar: ${error.message}`, 'error');
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = 'Daftar & Dapatkan Kode';
+    } catch (err) {
+      console.error(err);
+      showNotification('Terjadi kesalahan pada server.', 'error');
     }
   });
 
-  // Handler form verifikasi OTP pendaftaran
-  otpForm.addEventListener('submit', async (e) => {
+  // 📝 Register
+  registerForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const token = Array.from(otpInputsContainer.children)
-      .map((input) => input.value)
-      .join('');
-    if (token.length !== 6) {
-      showNotification('Harap masukkan 6 digit kode OTP.', 'error');
+
+    const name = document.getElementById('registerName').value.trim();
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value.trim();
+
+    if (!name || !email || !password) {
+      showNotification('Semua field wajib diisi.', 'error');
       return;
     }
-    const submitButton = otpForm.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = 'Memverifikasi...';
+
     try {
-      const { error } = await supabase.auth.verifyOtp({
-        email: userEmailForVerification,
-        token,
-        type: 'signup',
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
       });
-      if (error) throw error;
-      showNotification(
-        'Verifikasi berhasil! Anda akan diarahkan ke halaman utama.'
-      );
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 2000);
-    } catch (error) {
-      showNotification(`Verifikasi gagal: ${error.message}`, 'error');
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = 'Verifikasi Akun';
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showNotification('Registrasi berhasil! Silakan login.', 'success');
+        setTimeout(() => {
+          registerForm.classList.add('hidden');
+          loginForm.classList.remove('hidden');
+        }, 1500);
+      } else {
+        showNotification(data.message || 'Registrasi gagal.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Terjadi kesalahan pada server.', 'error');
     }
   });
-
-  // Handler form minta reset password
-  requestResetForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('reset-email').value;
-    userEmailForVerification = email; // Simpan email untuk tahap selanjutnya
-    const submitButton = requestResetForm.querySelector(
-      'button[type="submit"]'
-    );
-    submitButton.disabled = true;
-    submitButton.textContent = 'Mengirim...';
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin,
-      });
-      if (error) throw error;
-      showNotification('Kode reset password telah dikirim ke email Anda.');
-      requestResetForm.classList.add('hidden');
-      verifyResetOtpForm.classList.remove('hidden');
-    } catch (error) {
-      showNotification(`Gagal: ${error.message}`, 'error');
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = 'Kirim Kode';
-    }
-  });
-
-  // Handler form verifikasi OTP reset password
-  verifyResetOtpForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const token = Array.from(resetOtpInputsContainer.children)
-      .map((input) => input.value)
-      .join('');
-    if (token.length !== 6) {
-      showNotification('Harap masukkan 6 digit kode OTP.', 'error');
-      return;
-    }
-    const submitButton = verifyResetOtpForm.querySelector(
-      'button[type="submit"]'
-    );
-    submitButton.disabled = true;
-    submitButton.textContent = 'Memverifikasi...';
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        email: userEmailForVerification,
-        token,
-        type: 'recovery',
-      });
-      if (error) throw error;
-      showNotification(
-        'Verifikasi berhasil! Silakan buat password baru Anda.'
-      );
-      verifyResetOtpForm.classList.add('hidden');
-      updatePasswordForm.classList.remove('hidden');
-    } catch (error) {
-      showNotification(`Verifikasi gagal: ${error.message}`, 'error');
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = 'Verifikasi Kode';
-    }
-  });
-
-  // Handler form update password baru
-  updatePasswordForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const newPassword = document.getElementById('new-password').value;
-    if (newPassword.length < 6) {
-      showNotification('Password baru harus minimal 6 karakter.', 'error');
-      return;
-    }
-    const submitButton =
-      updatePasswordForm.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = 'Menyimpan...';
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
-      if (error) throw error;
-      showNotification(
-        'Password berhasil diubah! Silakan login dengan password baru Anda.'
-      );
-      setTimeout(() => {
-        resetPasswordSection.classList.add('hidden');
-        mainFormsContainer.classList.remove('hidden');
-        loginTab.click();
-      }, 2500);
-    } catch (error) {
-      showNotification(`Gagal memperbarui password: ${error.message}`, 'error');
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = 'Simpan Password Baru';
-    }
-  });
-
-  // === Inisialisasi ===
-  setupOtpInputListeners(otpInputsContainer);
-  setupOtpInputListeners(resetOtpInputsContainer);
 });
