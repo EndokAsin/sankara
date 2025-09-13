@@ -25,7 +25,7 @@
                 <img src="logo.png" alt="Sankara Logo" class="h-20 mx-auto mb-4" onerror="this.onerror=null; this.outerHTML='<h1 class=\'text-4xl font-bold text-gray-800\'>SANKARA</h1>'">
             </a>
             <h2 id="form-title" class="text-2xl font-bold text-gray-900">Masuk ke Akun Anda</h2>
-            <p id="form-subtitle" class="mt-2 text-sm text-gray-600">Dapatkan link login instan ke email Anda.</p>
+            <p id="form-subtitle" class="mt-2 text-sm text-gray-600">Selamat datang kembali! Silakan masuk.</p>
         </div>
 
         <!-- Tab Navigation -->
@@ -39,32 +39,42 @@
 
         <!-- Form Login -->
         <form id="login-form" class="mt-8 space-y-6">
-            <div>
-                <label for="login-email" class="sr-only">Alamat Email</label>
-                <input id="login-email" name="email" type="email" autocomplete="email" required class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Alamat Email">
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label for="login-email" class="sr-only">Alamat Email</label>
+                    <input id="login-email" name="email" type="email" autocomplete="email" required class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Alamat Email">
+                </div>
+                <div>
+                    <label for="login-password" class="sr-only">Password</label>
+                    <input id="login-password" name="password" type="password" autocomplete="current-password" required class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Password">
+                </div>
             </div>
             <div>
                 <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                    Kirim Link Login
+                    Masuk
                 </button>
             </div>
         </form>
 
         <!-- Form Registrasi (hidden by default) -->
         <form id="register-form" class="hidden mt-8 space-y-6">
-            <div class="space-y-4">
+            <div class="rounded-md shadow-sm -space-y-px">
                  <div>
                     <label for="register-fullname" class="sr-only">Nama Lengkap</label>
-                    <input id="register-fullname" name="fullname" type="text" autocomplete="name" required class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Nama Lengkap">
+                    <input id="register-fullname" name="fullname" type="text" autocomplete="name" required class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Nama Lengkap">
                 </div>
                 <div>
                     <label for="register-email" class="sr-only">Alamat Email</label>
-                    <input id="register-email" name="email" type="email" autocomplete="email" required class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Alamat Email">
+                    <input id="register-email" name="email" type="email" autocomplete="email" required class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Alamat Email">
+                </div>
+                <div>
+                    <label for="register-password" class="sr-only">Password</label>
+                    <input id="register-password" name="password" type="password" autocomplete="new-password" required class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Password (min. 6 karakter)">
                 </div>
             </div>
             <div>
                 <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                    Daftar & Kirim Link Verifikasi
+                    Daftar Akun Baru
                 </button>
             </div>
         </form>
