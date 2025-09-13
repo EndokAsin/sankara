@@ -2,7 +2,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 // Konfigurasi Supabase
 const supabaseUrl = 'https://vfdxtujestpslpsvdkwh.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI_NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZHh0dWplc3Rwc2xwc3Zka3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MTM1MTksImV4cCI6MjA3MDM4OTUxOX0.yJxlRUB1w7KS1bADPNnIaMNj3NRyjBWoJQFu2QJtknw';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 let currentUser = null;
@@ -14,7 +14,7 @@ const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('id-ID', options);
 };
 
-// --- AUTHENTICATION ---
+// --- AUTHENTICATION (REVISED) ---
 const setupAuthUI = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     currentUser = session?.user || null;
@@ -22,11 +22,25 @@ const setupAuthUI = async () => {
     const authButtonsContainer = document.getElementById('auth-buttons');
     const mobileMenuContainer = document.getElementById('mobile-menu');
 
+    // Kosongkan menu mobile terlebih dahulu
+    mobileMenuContainer.innerHTML = `
+        <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+        <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
+        <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
+        <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
+        <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
+        <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
+    `;
+
     if (currentUser) {
-        // Desktop Menu
+        // --- Tampilan jika SUDAH LOGIN ---
+        // Desktop: Tampilkan tombol "Jadi Relawan" dan "Logout"
         authButtonsContainer.innerHTML = `
-            <span class="text-sm hidden lg:block">Hi, ${session.user.user_metadata.full_name?.split(' ')[0] || currentUser.email.split('@')[0]}</span>
-            <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-6 rounded-full hover:bg-red-600 transition-all duration-300 shadow-md">
+            <a href="auth.html" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md">
+                Jadi Relawan
+            </a>
+            <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-red-600 transition-colors">
                 Logout
             </button>
         `;
@@ -35,15 +49,9 @@ const setupAuthUI = async () => {
             window.location.reload();
         });
 
-        // Mobile Menu
-        mobileMenuContainer.innerHTML = `
-            <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
-            <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
-            <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
-            <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
-            <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
-            <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
-            <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
+        // Mobile: Tambahkan tombol "Jadi Relawan" dan "Logout"
+        mobileMenuContainer.innerHTML += `
+            <a href="auth.html" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Jadi Relawan</a>
             <button id="mobile-logout-button" class="block w-full text-left py-2 px-4 text-sm bg-red-500 text-white text-center rounded-md m-2">Logout</button>
         `;
         document.getElementById('mobile-logout-button').addEventListener('click', async () => {
@@ -52,24 +60,17 @@ const setupAuthUI = async () => {
         });
 
     } else {
-        // Desktop Menu
+        // --- Tampilan jika BELUM LOGIN ---
+        // Desktop: Hanya tampilkan tombol "Jadi Relawan"
         authButtonsContainer.innerHTML = `
-            <a href="auth.html" class="text-sankara-dark font-medium hover:text-sankara-green-dark transition-colors">Login</a>
             <a href="auth.html" class="bg-sankara-green-dark text-white font-bold py-2 px-6 rounded-full hover:bg-sankara-green-dark/90 transition-all duration-300 shadow-md">
                 Jadi Relawan
             </a>
         `;
 
-        // Mobile Menu
-        mobileMenuContainer.innerHTML = `
-            <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
-            <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
-            <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
-            <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
-            <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
-            <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
-            <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
-            <a href="auth.html" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Login / Daftar</a>
+        // Mobile: Hanya tambahkan tombol "Jadi Relawan"
+        mobileMenuContainer.innerHTML += `
+            <a href="auth.html" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Jadi Relawan</a>
         `;
     }
 };
@@ -98,7 +99,7 @@ const setupUIInteractions = () => {
     // Close dropdown when clicking outside
     document.addEventListener('click', (event) => {
         const container = document.getElementById('about-dropdown-container');
-        if (container && !container.contains(event.target)) {
+        if (aboutDropdownMenu && container && !container.contains(event.target)) {
             aboutDropdownMenu.classList.add('hidden');
         }
     });
@@ -154,7 +155,7 @@ const renderPrograms = (filter) => {
 };
 
 const fetchAndRenderPrograms = async () => {
-    if (!eventsLoader) return; // Guard clause
+    if (!eventsLoader) return;
     eventsLoader.style.display = 'block';
     upcomingContainer.innerHTML = '';
     closedContainer.innerHTML = '';
@@ -168,30 +169,29 @@ const fetchAndRenderPrograms = async () => {
         if (error) throw error;
         
         allPrograms = data;
-        renderPrograms('upcoming'); // Initial render
-        renderPrograms('closed'); // Pre-render closed tab
+        renderPrograms('upcoming');
+        renderPrograms('closed');
         
-        // Initially show upcoming tab
         upcomingContainer.classList.remove('hidden');
         closedContainer.classList.add('hidden');
         tabUpcoming.classList.add('tab-active');
         tabClosed.classList.remove('tab-active');
 
-
     } catch (error) {
         console.error('Error fetching programs:', error);
-        upcomingContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Gagal memuat program. Error: ${error.message}</p>`;
+        if (upcomingContainer) {
+            upcomingContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Gagal memuat program. Error: ${error.message}</p>`;
+        }
     } finally {
-        eventsLoader.style.display = 'none';
+        if(eventsLoader) eventsLoader.style.display = 'none';
     }
 };
 
 const openDetailModal = (eventId) => {
-    // Pengecekan login dipindahkan ke sini
     if (!currentUser) {
         alert("Anda harus login terlebih dahulu untuk melihat detail program.");
         window.location.href = 'auth.html';
-        return; // Hentikan fungsi jika pengguna belum login
+        return;
     }
 
     const event = allPrograms.find(e => e.id === eventId);
@@ -216,13 +216,13 @@ const openDetailModal = (eventId) => {
             <div>
                 <strong class="font-semibold text-gray-800 block mb-2">Tugas Relawan:</strong>
                 <ul class="list-disc list-inside space-y-1 pl-2">
-                    ${(event.tasks || '').split('\n').map(task => `<li>${task}</li>`).join('')}
+                    ${(event.tasks || '').split('\n').filter(t => t).map(task => `<li>${task}</li>`).join('')}
                 </ul>
             </div>
             <div>
                 <strong class="font-semibold text-gray-800 block mb-2">Kriteria Relawan:</strong>
                 <ul class="list-disc list-inside space-y-1 pl-2">
-                     ${(event.criteria || '').split('\n').map(c => `<li>${c}</li>`).join('')}
+                     ${(event.criteria || '').split('\n').filter(c => c).map(c => `<li>${c}</li>`).join('')}
                 </ul>
             </div>
             <div class="mt-6 flex justify-end">
@@ -239,7 +239,6 @@ const openDetailModal = (eventId) => {
 };
 
 const openRegisterModal = (eventId) => {
-    // Pengecekan di sini tetap ada sebagai lapisan keamanan kedua
     if (!currentUser) {
         alert("Anda harus login terlebih dahulu untuk mendaftar.");
         window.location.href = 'auth.html';
@@ -249,7 +248,7 @@ const openRegisterModal = (eventId) => {
     const event = allPrograms.find(e => e.id === eventId);
     if (!event) return;
 
-    detailModal.classList.add('hidden'); // Hide detail modal first
+    detailModal.classList.add('hidden');
 
     registerModalContent.innerHTML = `
          <div class="flex justify-between items-start mb-4">
@@ -265,7 +264,7 @@ const openRegisterModal = (eventId) => {
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <span class="text-gray-500 sm:text-sm">+62</span>
                     </div>
-                    <input type="tel" id="phone-number" required class="block w-full pl-12 pr-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-sankara-green-dark focus:border-sankara-green-dark" placeholder="8123456789">
+                    <input type="tel" id="phone-number" required class="block w-full pl-12 pr-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="8123456789">
                 </div>
             </div>
             <div class="pt-4 border-t">
@@ -305,7 +304,7 @@ const handleRegistrationSubmit = async (e, eventId) => {
     registerButton.textContent = 'Memproses...';
 
 
-    const { data, error } = await supabase
+    const { error } = await supabase
         .from('event_registrations')
         .insert([
             { user_id: currentUser.id, event_id: eventId }
@@ -317,23 +316,21 @@ const handleRegistrationSubmit = async (e, eventId) => {
         registerButton.disabled = false;
         registerButton.textContent = 'Lanjut ke Pembayaran';
     } else {
-        alert("Pendaftaran berhasil! Terima kasih telah bergabung. Detail selanjutnya akan diinformasikan oleh panitia.");
+        alert("Pendaftaran berhasil! Terima kasih telah bergabung.");
         registerModal.classList.add('hidden');
     }
 };
 
 // --- EVENT LISTENERS ---
 const setupTabListeners = () => {
-    if (tabUpcoming) {
+    if (tabUpcoming && tabClosed) {
         tabUpcoming.addEventListener('click', () => {
             upcomingContainer.classList.remove('hidden');
             closedContainer.classList.add('hidden');
             tabUpcoming.classList.add('tab-active');
             tabClosed.classList.remove('tab-active');
         });
-    }
 
-    if (tabClosed) {
         tabClosed.addEventListener('click', () => {
             upcomingContainer.classList.add('hidden');
             closedContainer.classList.remove('hidden');
@@ -348,7 +345,6 @@ document.addEventListener('click', (e) => {
         const eventId = e.target.dataset.eventId;
         openDetailModal(eventId);
     }
-    // Close modal if clicking on backdrop
     if (e.target === detailModal || e.target === registerModal) {
         detailModal.classList.add('hidden');
         registerModal.classList.add('hidden');
@@ -362,3 +358,4 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchAndRenderPrograms();
     setupTabListeners();
 });
+
