@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         verifyResetOtpForm: document.getElementById('verify-reset-otp-form'),
         resetOtpInputsContainer: document.getElementById('reset-otp-inputs'),
         updatePasswordForm: document.getElementById('update-password-form'),
-        backToLoginBtn: document.getElementById('back-to-login-1')
+        backToLoginBtn: document.getElementById('back-to-login-btn')
     };
 
     let userEmailForVerification = '';
@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === Handler Form ===
     
-    // Handler form login
     elements.loginForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value;
@@ -108,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handler form registrasi
     elements.registerForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('register-email').value;
@@ -141,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handler form verifikasi OTP pendaftaran
     elements.otpForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const token = Array.from(elements.otpInputsContainer.children).map(input => input.value).join('');
@@ -167,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handler form minta reset password
     elements.requestResetForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('reset-email').value;
@@ -189,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Handler form verifikasi OTP reset password
     elements.verifyResetOtpForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const token = Array.from(elements.resetOtpInputsContainer.children).map(input => input.value).join('');
@@ -216,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Handler form update password baru
     elements.updatePasswordForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newPassword = document.getElementById('new-password').value;
