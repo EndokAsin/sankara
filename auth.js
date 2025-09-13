@@ -1,4 +1,4 @@
-[Immersive content redacted for brevity.]
+
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // Konfigurasi Supabase
@@ -253,5 +253,3 @@ document.addEventListener('DOMContentLoaded', () => {
     setupOtpInputListeners(otpInputsContainer);
     setupOtpInputListeners(resetOtpInputsContainer);
 });
-
-```
