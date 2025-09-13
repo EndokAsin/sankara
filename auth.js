@@ -1,4 +1,4 @@
-[Immersive content redacted for brevity.]
+
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // Konfigurasi Supabase
@@ -7,42 +7,49 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 document.addEventListener('DOMContentLoaded', () => {
-    // === Elemen UI ===
-    const notification = document.getElementById('notification');
-    const mainFormsContainer = document.getElementById('main-forms');
+    // === Elemen UI & Debugging ===
+    console.log("Auth script loaded. Checking for elements...");
     
-    // Form Login & Register
-    const loginTab = document.getElementById('login-tab');
-    const registerTab = document.getElementById('register-tab');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    
-    // Form OTP Pendaftaran
-    const otpSection = document.getElementById('otp-section');
-    const otpForm = document.getElementById('otp-form');
-    const otpEmailDisplay = document.getElementById('otp-email-display');
-    const otpInputsContainer = document.getElementById('otp-inputs');
-    
-    // Form Reset Password
-    const forgotPasswordLink = document.getElementById('forgot-password-link');
-    const resetPasswordSection = document.getElementById('reset-password-section');
-    const requestResetForm = document.getElementById('request-reset-form');
-    const verifyResetOtpForm = document.getElementById('verify-reset-otp-form');
-    const resetOtpInputsContainer = document.getElementById('reset-otp-inputs');
-    const updatePasswordForm = document.getElementById('update-password-form');
-    const backToLoginBtn = document.getElementById('back-to-login-1');
+    const elements = {
+        notification: document.getElementById('notification'),
+        mainFormsContainer: document.getElementById('main-forms'),
+        loginTab: document.getElementById('login-tab'),
+        registerTab: document.getElementById('register-tab'),
+        loginForm: document.getElementById('login-form'),
+        registerForm: document.getElementById('register-form'),
+        otpSection: document.getElementById('otp-section'),
+        otpForm: document.getElementById('otp-form'),
+        otpEmailDisplay: document.getElementById('otp-email-display'),
+        otpInputsContainer: document.getElementById('otp-inputs'),
+        forgotPasswordLink: document.getElementById('forgot-password-link'),
+        resetPasswordSection: document.getElementById('reset-password-section'),
+        requestResetForm: document.getElementById('request-reset-form'),
+        verifyResetOtpForm: document.getElementById('verify-reset-otp-form'),
+        resetOtpInputsContainer: document.getElementById('reset-otp-inputs'),
+        updatePasswordForm: document.getElementById('update-password-form'),
+        backToLoginBtn: document.getElementById('back-to-login-1')
+    };
+
+    // Loop untuk memeriksa apakah semua elemen ditemukan
+    Object.keys(elements).forEach(key => {
+        if (elements[key]) {
+            console.log(`[OK] Element found: #${key}`);
+        } else {
+            console.error(`[ERROR] Element with ID '${key}' not found. Please check your auth.html file for typos.`);
+        }
+    });
 
     let userEmailForVerification = '';
 
     // === Fungsi Helper ===
     const showNotification = (message, type = 'success') => {
-        if (!notification) return;
-        notification.textContent = message;
-        notification.className = 'p-4 text-sm rounded-lg mb-4';
+        if (!elements.notification) return;
+        elements.notification.textContent = message;
+        elements.notification.className = 'p-4 text-sm rounded-lg mb-4';
         if (type === 'success') {
-            notification.classList.add('bg-green-100', 'text-green-700');
+            elements.notification.classList.add('bg-green-100', 'text-green-700');
         } else {
-            notification.classList.add('bg-red-100', 'text-red-700');
+            elements.notification.classList.add('bg-red-100', 'text-red-700');
         }
     };
 
@@ -59,50 +66,50 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // === Logika UI yang Lebih Aman ===
-    if (loginTab && registerTab && loginForm && registerForm) {
-        loginTab.addEventListener('click', () => {
-            loginTab.classList.add('tab-active');
-            registerTab.classList.remove('tab-active');
-            loginForm.classList.remove('hidden');
-            registerForm.classList.add('hidden');
-            if (notification) notification.classList.add('hidden');
+    if (elements.loginTab && elements.registerTab) {
+        elements.loginTab.addEventListener('click', () => {
+            elements.loginTab.classList.add('tab-active');
+            elements.registerTab.classList.remove('tab-active');
+            elements.loginForm.classList.remove('hidden');
+            elements.registerForm.classList.add('hidden');
+            if (elements.notification) elements.notification.classList.add('hidden');
         });
 
-        registerTab.addEventListener('click', () => {
-            registerTab.classList.add('tab-active');
-            loginTab.classList.remove('tab-active');
-            registerForm.classList.remove('hidden');
-            loginForm.classList.add('hidden');
-            if (notification) notification.classList.add('hidden');
+        elements.registerTab.addEventListener('click', () => {
+            elements.registerTab.classList.add('tab-active');
+            elements.loginTab.classList.remove('tab-active');
+            elements.registerForm.classList.remove('hidden');
+            elements.loginForm.classList.add('hidden');
+            if (elements.notification) elements.notification.classList.add('hidden');
         });
     }
     
-    if (forgotPasswordLink && mainFormsContainer && resetPasswordSection) {
-        forgotPasswordLink.addEventListener('click', (e) => {
+    if (elements.forgotPasswordLink) {
+        elements.forgotPasswordLink.addEventListener('click', (e) => {
             e.preventDefault();
-            mainFormsContainer.classList.add('hidden');
-            resetPasswordSection.classList.remove('hidden');
-            if (notification) notification.classList.add('hidden');
+            elements.mainFormsContainer.classList.add('hidden');
+            elements.resetPasswordSection.classList.remove('hidden');
+            if (elements.notification) elements.notification.classList.add('hidden');
         });
     }
     
-    if (backToLoginBtn && mainFormsContainer && resetPasswordSection) {
-        backToLoginBtn.addEventListener('click', () => {
-            mainFormsContainer.classList.remove('hidden');
-            resetPasswordSection.classList.add('hidden');
-            if (requestResetForm) requestResetForm.classList.remove('hidden');
-            if (verifyResetOtpForm) verifyResetOtpForm.classList.add('hidden');
-            if (updatePasswordForm) updatePasswordForm.classList.add('hidden');
+    if (elements.backToLoginBtn) {
+        elements.backToLoginBtn.addEventListener('click', () => {
+            elements.mainFormsContainer.classList.remove('hidden');
+            elements.resetPasswordSection.classList.add('hidden');
+            elements.requestResetForm.classList.remove('hidden');
+            elements.verifyResetOtpForm.classList.add('hidden');
+            elements.updatePasswordForm.classList.add('hidden');
         });
     }
 
-    // === Handler Form yang Lebih Aman ===
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
+    // === Handler Form ===
+    if (elements.loginForm) {
+        elements.loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            const submitButton = loginForm.querySelector('button[type="submit"]');
+            const submitButton = elements.loginForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = 'Memproses...';
             try {
@@ -118,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
+    if (elements.registerForm) {
+        elements.registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
@@ -128,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification('Password harus memiliki minimal 6 karakter.', 'error');
                 return;
             }
-            const submitButton = registerForm.querySelector('button[type="submit"]');
+            const submitButton = elements.registerForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = 'Mendaftar...';
             try {
@@ -138,9 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (error) throw error;
                 if (data.user) {
                     userEmailForVerification = email;
-                    if(otpEmailDisplay) otpEmailDisplay.textContent = email;
-                    if(mainFormsContainer) mainFormsContainer.classList.add('hidden');
-                    if(otpSection) otpSection.classList.remove('hidden');
+                    elements.otpEmailDisplay.textContent = email;
+                    elements.mainFormsContainer.classList.add('hidden');
+                    elements.otpSection.classList.remove('hidden');
                     showNotification('Kode verifikasi telah dikirim ke email Anda.');
                 }
             } catch (error) {
@@ -152,15 +159,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    if (otpForm) {
-        otpForm.addEventListener('submit', async (e) => {
+    if (elements.otpForm) {
+        elements.otpForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const token = Array.from(otpInputsContainer.children).map(input => input.value).join('');
+            const token = Array.from(elements.otpInputsContainer.children).map(input => input.value).join('');
             if (token.length !== 6) {
                 showNotification('Harap masukkan 6 digit kode OTP.', 'error');
                 return;
             }
-            const submitButton = otpForm.querySelector('button[type="submit"]');
+            const submitButton = elements.otpForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = 'Memverifikasi...';
             try {
@@ -179,22 +186,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (requestResetForm) {
-        requestResetForm.addEventListener('submit', async (e) => {
+    if (elements.requestResetForm) {
+        elements.requestResetForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('reset-email').value;
             userEmailForVerification = email;
-            const submitButton = requestResetForm.querySelector('button[type="submit"]');
+            const submitButton = elements.requestResetForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = 'Mengirim...';
             try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin,
-                });
+                const { error } = await supabase.auth.resetPasswordForEmail(email);
                 if (error) throw error;
                 showNotification('Kode reset password telah dikirim ke email Anda.');
-                if(requestResetForm) requestResetForm.classList.add('hidden');
-                if(verifyResetOtpForm) verifyResetOtpForm.classList.remove('hidden');
+                elements.requestResetForm.classList.add('hidden');
+                elements.verifyResetOtpForm.classList.remove('hidden');
             } catch (error) {
                 showNotification(`Gagal: ${error.message}`, 'error');
             } finally {
@@ -204,15 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    if (verifyResetOtpForm) {
-        verifyResetOtpForm.addEventListener('submit', async (e) => {
+    if (elements.verifyResetOtpForm) {
+        elements.verifyResetOtpForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const token = Array.from(resetOtpInputsContainer.children).map(input => input.value).join('');
+            const token = Array.from(elements.resetOtpInputsContainer.children).map(input => input.value).join('');
             if (token.length !== 6) {
                 showNotification('Harap masukkan 6 digit kode OTP.', 'error');
                 return;
             }
-            const submitButton = verifyResetOtpForm.querySelector('button[type="submit"]');
+            const submitButton = elements.verifyResetOtpForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = 'Memverifikasi...';
             try {
@@ -221,8 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 if (error) throw error;
                 showNotification('Verifikasi berhasil! Silakan buat password baru Anda.');
-                if(verifyResetOtpForm) verifyResetOtpForm.classList.add('hidden');
-                if(updatePasswordForm) updatePasswordForm.classList.remove('hidden');
+                elements.verifyResetOtpForm.classList.add('hidden');
+                elements.updatePasswordForm.classList.remove('hidden');
             } catch (error) {
                 showNotification(`Verifikasi gagal: ${error.message}`, 'error');
             } finally {
@@ -232,15 +237,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    if (updatePasswordForm) {
-        updatePasswordForm.addEventListener('submit', async (e) => {
+    if (elements.updatePasswordForm) {
+        elements.updatePasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const newPassword = document.getElementById('new-password').value;
             if (newPassword.length < 6) {
                 showNotification('Password baru harus minimal 6 karakter.', 'error');
                 return;
             }
-            const submitButton = updatePasswordForm.querySelector('button[type="submit"]');
+            const submitButton = elements.updatePasswordForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = 'Menyimpan...';
             try {
@@ -248,9 +253,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (error) throw error;
                 showNotification('Password berhasil diubah! Silakan login dengan password baru Anda.');
                 setTimeout(() => {
-                    if(resetPasswordSection) resetPasswordSection.classList.add('hidden');
-                    if(mainFormsContainer) mainFormsContainer.classList.remove('hidden');
-                    if(loginTab) loginTab.click();
+                    elements.resetPasswordSection.classList.add('hidden');
+                    elements.mainFormsContainer.classList.remove('hidden');
+                    elements.loginTab.click();
                 }, 2500);
             } catch (error) {
                 showNotification(`Gagal memperbarui password: ${error.message}`, 'error');
@@ -262,6 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // === Inisialisasi ===
-    setupOtpInputListeners(otpInputsContainer);
-    setupOtpInputListeners(resetOtpInputsContainer);
+    setupOtpInputListeners(elements.otpInputsContainer);
+    setupOtpInputListeners(elements.resetOtpInputsContainer);
 });
