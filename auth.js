@@ -77,6 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const fullName = document.getElementById('register-fullname').value;
         const submitButton = registerForm.querySelector('button[type="submit"]');
 
+        // Validasi password di sisi klien
+        if (password.length < 6) {
+            showNotification('Password harus memiliki minimal 6 karakter.', 'error');
+            return;
+        }
+
         submitButton.disabled = true;
         submitButton.textContent = 'Mendaftar...';
         notification.classList.add('hidden');
@@ -90,16 +96,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            if (error) throw error;
+            if (error) {
+                console.error("Supabase signUp error:", error);
+                throw error;
+            }
 
-            // Jika berhasil, tampilkan form OTP
-            userEmailForVerification = email;
-            otpEmailDisplay.textContent = email;
-            mainFormsContainer.classList.add('hidden');
-            otpSection.classList.remove('hidden');
-            showNotification('Kode verifikasi telah dikirim ke email Anda.');
+            // Jika user berhasil dibuat dan memerlukan verifikasi (alur normal)
+            if (data.user) {
+                userEmailForVerification = email;
+                otpEmailDisplay.textContent = email;
+                mainFormsContainer.classList.add('hidden');
+                otpSection.classList.remove('hidden');
+                showNotification('Kode verifikasi telah dikirim ke email Anda.');
+            } else {
+                // Skenario tidak terduga jika tidak ada user data atau error
+                throw new Error("Terjadi kesalahan yang tidak diketahui saat pendaftaran.");
+            }
 
         } catch (error) {
+            console.error('Proses pendaftaran gagal:', error);
             showNotification(`Gagal mendaftar: ${error.message}`, 'error');
         } finally {
             submitButton.disabled = false;
