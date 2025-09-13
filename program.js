@@ -153,7 +153,7 @@ async function fetchAndRenderPrograms() {
 
     } catch (error) {
         console.error("Error fetching programs:", error);
-        upcomingContent.innerHTML = `<p class="text-red-500 col-span-full text-center">Gagal memuat data program.</p>`;
+        upcomingContent.innerHTML = `<p class="text-red-500 col-span-full text-center">Gagal memuat data program. Error: ${error.message}</p>`;
     } finally {
         loader.style.display = 'none';
     }
@@ -161,15 +161,21 @@ async function fetchAndRenderPrograms() {
 
 function switchTab(activeTab) {
     if (activeTab === 'upcoming') {
-        tabUpcoming.classList.add('tab-active');
-        tabClosed.classList.remove('tab-active');
+        tabUpcoming.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark', 'font-semibold');
+        tabUpcoming.classList.remove('border-transparent', 'text-gray-500');
+        tabClosed.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark', 'font-semibold');
+        tabClosed.classList.add('border-transparent', 'text-gray-500');
+
         upcomingContent.classList.remove('hidden');
         upcomingContent.classList.add('grid');
         closedContent.classList.add('hidden');
         closedContent.classList.remove('grid');
     } else {
-        tabUpcoming.classList.remove('tab-active');
-        tabClosed.classList.add('tab-active');
+        tabClosed.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark', 'font-semibold');
+        tabClosed.classList.remove('border-transparent', 'text-gray-500');
+        tabUpcoming.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark', 'font-semibold');
+        tabUpcoming.classList.add('border-transparent', 'text-gray-500');
+        
         upcomingContent.classList.add('hidden');
         upcomingContent.classList.remove('grid');
         closedContent.classList.remove('hidden');
@@ -210,21 +216,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const aboutDropdownMenu = document.getElementById('about-dropdown-menu');
     const aboutDropdownContainer = document.getElementById('about-dropdown-container');
 
-    mobileMenu.innerHTML = `
-        <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
-        <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
-        <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
-        <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
-        <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
-        <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
-        <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
-        <a href="index.html#donate" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Donasi Sekarang</a>
-    `;
+    if (mobileMenu) {
+        mobileMenu.innerHTML = `
+            <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+            <a href="tentang.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tentang Sankara</a>
+            <a href="tim.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Tim Kami</a>
+            <a href="program.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Program</a>
+            <a href="berita.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Berita</a>
+            <a href="mitra.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mitra</a>
+            <a href="kontak.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Kontak</a>
+            <a href="index.html#donate" class="block py-2 px-4 text-sm bg-sankara-green-dark text-white text-center rounded-md m-2">Donasi Sekarang</a>
+        `;
+    }
 
-    mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-    aboutDropdownButton.addEventListener('click', () => aboutDropdownMenu.classList.toggle('hidden'));
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    }
+    
+    if (aboutDropdownButton) {
+        aboutDropdownButton.addEventListener('click', () => aboutDropdownMenu.classList.toggle('hidden'));
+    }
+
     document.addEventListener('click', (event) => {
-        if (!aboutDropdownContainer.contains(event.target)) {
+        if (aboutDropdownContainer && !aboutDropdownContainer.contains(event.target)) {
             aboutDropdownMenu.classList.add('hidden');
         }
     });
