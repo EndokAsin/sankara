@@ -14,4 +14,4 @@ jobs:
           curl -X POST \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Content-Type: application/json" \
-            https://<PROJECT_REF>.functions.supabase.co/backup
+            https://<vfdxtujestpslpsvdkwh>.functions.supabase.co/backup
