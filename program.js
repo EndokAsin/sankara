@@ -345,4 +345,3 @@ document.addEventListener('DOMContentLoaded', () => {
     setupUIInteractions();
     fetchAndRenderPrograms();
 });
-
