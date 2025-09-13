@@ -82,14 +82,18 @@ const setupUIInteractions = () => {
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
-    aboutDropdownButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        aboutDropdownMenu.classList.toggle('hidden');
-    });
+    if (aboutDropdownButton) {
+        aboutDropdownButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            aboutDropdownMenu.classList.toggle('hidden');
+        });
+    }
 
-    mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
 
     // Close dropdown when clicking outside
     document.addEventListener('click', (event) => {
@@ -150,6 +154,7 @@ const renderPrograms = (filter) => {
 };
 
 const fetchAndRenderPrograms = async () => {
+    if (!eventsLoader) return; // Guard clause
     eventsLoader.style.display = 'block';
     upcomingContainer.innerHTML = '';
     closedContainer.innerHTML = '';
@@ -169,14 +174,13 @@ const fetchAndRenderPrograms = async () => {
         // Initially show upcoming tab
         upcomingContainer.classList.remove('hidden');
         closedContainer.classList.add('hidden');
-        tabUpcoming.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
-        tabClosed.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
-        tabClosed.classList.add('border-transparent', 'text-gray-500');
+        tabUpcoming.classList.add('tab-active');
+        tabClosed.classList.remove('tab-active');
 
 
     } catch (error) {
         console.error('Error fetching programs:', error);
-        upcomingContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Gagal memuat program. Periksa koneksi dan izin akses Anda.</p>`;
+        upcomingContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Gagal memuat program. Error: ${error.message}</p>`;
     } finally {
         eventsLoader.style.display = 'none';
     }
@@ -319,21 +323,25 @@ const handleRegistrationSubmit = async (e, eventId) => {
 };
 
 // --- EVENT LISTENERS ---
-tabUpcoming.addEventListener('click', () => {
-    upcomingContainer.classList.remove('hidden');
-    closedContainer.classList.add('hidden');
-    tabUpcoming.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
-    tabClosed.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
-    tabClosed.classList.add('border-transparent', 'text-gray-500');
-});
+const setupTabListeners = () => {
+    if (tabUpcoming) {
+        tabUpcoming.addEventListener('click', () => {
+            upcomingContainer.classList.remove('hidden');
+            closedContainer.classList.add('hidden');
+            tabUpcoming.classList.add('tab-active');
+            tabClosed.classList.remove('tab-active');
+        });
+    }
 
-tabClosed.addEventListener('click', () => {
-    upcomingContainer.classList.add('hidden');
-    closedContainer.classList.remove('hidden');
-    tabUpcoming.classList.remove('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
-    tabUpcoming.classList.add('border-transparent', 'text-gray-500');
-    tabClosed.classList.add('tab-active', 'border-sankara-green-dark', 'text-sankara-green-dark');
-});
+    if (tabClosed) {
+        tabClosed.addEventListener('click', () => {
+            upcomingContainer.classList.add('hidden');
+            closedContainer.classList.remove('hidden');
+            tabUpcoming.classList.remove('tab-active');
+            tabClosed.classList.add('tab-active');
+        });
+    }
+}
 
 document.addEventListener('click', (e) => {
     if (e.target && e.target.classList.contains('view-detail-btn')) {
@@ -352,5 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAuthUI();
     setupUIInteractions();
     fetchAndRenderPrograms();
+    setupTabListeners();
 });
 
