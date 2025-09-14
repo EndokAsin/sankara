@@ -492,11 +492,14 @@ const setupTabListeners = () => {
 }
 
 document.addEventListener('click', async (e) => { // Dibuat async
-    if (e.target && e.target.classList.contains('view-detail-btn')) {
-        const eventId = e.target.dataset.eventId;
+    const detailBtn = e.target.closest('.view-detail-btn');
+    const shareBtn = e.target.closest('.share-program-btn');
+
+    if (detailBtn) {
+        const eventId = detailBtn.dataset.eventId;
         await openDetailModal(eventId); // Await pemanggilan fungsi
-    } else if (e.target && e.target.classList.contains('share-program-btn')) {
-        const eventId = e.target.dataset.eventId;
+    } else if (shareBtn) {
+        const eventId = shareBtn.dataset.eventId;
         const eventToShare = allPrograms.find(e => e.id === eventId);
         if (eventToShare) {
             await shareProgram(eventToShare);
