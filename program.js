@@ -143,6 +143,28 @@ const registerModalContent = document.getElementById('register-modal-content');
 
 let allPrograms = [];
 
+// Fungsi untuk menangani logika berbagi program
+const shareProgram = async (event) => {
+    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${event.id}`;
+    const shareData = {
+        title: event.title,
+        text: `Bergabunglah sebagai sukarelawan untuk program ${event.title} di Sankara! Selengkapnya di sini:`,
+        url: shareUrl
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            await navigator.clipboard.writeText(shareData.url);
+            // Tambahkan umpan balik visual untuk salin berhasil
+            // Ini akan ditangani oleh elemen span di modal jika dipanggil dari sana
+        }
+    } catch (err) {
+        console.error('Error saat berbagi:', err);
+    }
+};
+
 const renderPrograms = (filter) => {
     const container = filter === 'upcoming' ? upcomingContainer : closedContainer;
     container.innerHTML = '';
@@ -205,7 +227,18 @@ const renderPrograms = (filter) => {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                             <span>${quotaText}</span>
                          </div>
-                        ${detailButtonHTML}
+                        <div class="flex items-center space-x-2">
+                             <button data-event-id="${event.id}" class="share-program-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="18" cy="5" r="3"/>
+                                    <circle cx="6" cy="12" r="3"/>
+                                    <circle cx="18" cy="19" r="3"/>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                </svg>
+                            </button>
+                            ${detailButtonHTML}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -331,7 +364,7 @@ const openRegisterModal = (eventId) => {
     detailModal.classList.add('hidden');
 
     registerModalContent.innerHTML = `
-         <div class="flex justify-between items-start mb-4">
+           <div class="flex justify-between items-start mb-4">
             <h2 class="text-xl font-bold text-sankara-dark">Pendaftaran Volunteer</h2>
             <button id="close-register-modal" class="text-gray-500 text-3xl leading-none hover:text-gray-800">&times;</button>
         </div>
@@ -462,6 +495,12 @@ document.addEventListener('click', async (e) => { // Dibuat async
     if (e.target && e.target.classList.contains('view-detail-btn')) {
         const eventId = e.target.dataset.eventId;
         await openDetailModal(eventId); // Await pemanggilan fungsi
+    } else if (e.target && e.target.classList.contains('share-program-btn')) {
+        const eventId = e.target.dataset.eventId;
+        const eventToShare = allPrograms.find(e => e.id === eventId);
+        if (eventToShare) {
+            await shareProgram(eventToShare);
+        }
     }
     if (e.target === detailModal || e.target === registerModal) {
         detailModal.classList.add('hidden');
@@ -476,4 +515,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     await fetchAndRenderPrograms();
     setupTabListeners();
 });
-
