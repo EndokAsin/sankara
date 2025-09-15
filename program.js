@@ -8,6 +8,26 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 let currentUser = null;
 let userRegisteredEvents = []; // Menyimpan ID event yang sudah diikuti user
 
+const sdgIcons = {
+    SDG1: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-01.png" alt="SDG 1: No Poverty" class="sdg-icon w-8 h-8">',
+    SDG2: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-02.png" alt="SDG 2: Zero Hunger" class="sdg-icon w-8 h-8">',
+    SDG3: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-03.png" alt="SDG 3: Good Health and Well-being" class="sdg-icon w-8 h-8">',
+    SDG4: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-04.png" alt="SDG 4: Quality Education" class="sdg-icon w-8 h-8">',
+    SDG5: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-05.png" alt="SDG 5: Gender Equality" class="sdg-icon w-8 h-8">',
+    SDG6: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-06.png" alt="SDG 6: Clean Water and Sanitation" class="sdg-icon w-8 h-8">',
+    SDG7: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-07.png" alt="SDG 7: Affordable and Clean Energy" class="sdg-icon w-8 h-8">',
+    SDG8: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-08.png" alt="SDG 8: Decent Work and Economic Growth" class="sdg-icon w-8 h-8">',
+    SDG9: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-09.png" alt="SDG 9: Industry, Innovation and Infrastructure" class="sdg-icon w-8 h-8">',
+    SDG10: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-10.png" alt="SDG 10: Reduced Inequalities" class="sdg-icon w-8 h-8">',
+    SDG11: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-11.png" alt="SDG 11: Sustainable Cities and Communities" class="sdg-icon w-8 h-8">',
+    SDG12: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-12.png" alt="SDG 12: Responsible Consumption and Production" class="sdg-icon w-8 h-8">',
+    SDG13: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-13.png" alt="SDG 13: Climate Action" class="sdg-icon w-8 h-8">',
+    SDG14: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-14.png" alt="SDG 14: Life Below Water" class="sdg-icon w-8 h-8">',
+    SDG15: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-15.png" alt="SDG 15: Life on Land" class="sdg-icon w-8 h-8">',
+    SDG16: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-16.png" alt="SDG 16: Peace, Justice and Strong Institutions" class="sdg-icon w-8 h-8">',
+    SDG17: '<img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/E-WEB-Goal-17.png" alt="SDG 17: Partnerships for the Goals" class="sdg-icon w-8 h-8">',
+};
+
 // --- UTILITIES ---
 const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -143,28 +163,6 @@ const registerModalContent = document.getElementById('register-modal-content');
 
 let allPrograms = [];
 
-// Fungsi untuk menangani logika berbagi program
-const shareProgram = async (event) => {
-    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${event.id}`;
-    const shareData = {
-        title: event.title,
-        text: `Bergabunglah sebagai sukarelawan untuk program ${event.title} di Sankara! Selengkapnya di sini:`,
-        url: shareUrl
-    };
-
-    try {
-        if (navigator.share) {
-            await navigator.share(shareData);
-        } else {
-            await navigator.clipboard.writeText(shareData.url);
-            // Tambahkan umpan balik visual untuk salin berhasil
-            // Ini akan ditangani oleh elemen span di modal jika dipanggil dari sana
-        }
-    } catch (err) {
-        console.error('Error saat berbagi:', err);
-    }
-};
-
 const renderPrograms = (filter) => {
     const container = filter === 'upcoming' ? upcomingContainer : closedContainer;
     container.innerHTML = '';
@@ -203,6 +201,8 @@ const renderPrograms = (filter) => {
             detailButtonHTML = `<button data-event-id="${event.id}" class="view-detail-btn bg-sankara-dark text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-black transition-colors">Lihat Detail</button>`;
         }
 
+        const sdgIconsHtml = (event.sdgs || []).map(sdg => sdgIcons[sdg] || '').join('');
+
         const card = `
             <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col">
                 <img src="${event.image_url || 'https://placehold.co/600x400/dcfce7/1e293b?text=Sankara'}" alt="${event.title}" class="w-full h-48 object-cover">
@@ -222,22 +222,20 @@ const renderPrograms = (filter) => {
 
                     <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">${event.description}</p>
                     
+                    <div class="flex items-center space-x-2 mb-4">
+                        ${sdgIconsHtml}
+                    </div>
+
                     <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
                          <div class="flex items-center text-sm ${remainingQuota !== null && remainingQuota <= 0 ? 'text-red-500' : 'text-gray-600'} font-medium">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                            <span>${quotaText}</span>
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                             <span>${quotaText}</span>
                          </div>
-                        <div class="flex items-center space-x-2">
-                             <button data-event-id="${event.id}" class="share-program-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg flex items-center justify-center hover:bg-gray-300 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="18" cy="5" r="3"/>
-                                    <circle cx="6" cy="12" r="3"/>
-                                    <circle cx="18" cy="19" r="3"/>
-                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                                </svg>
-                            </button>
-                            ${detailButtonHTML}
+                        <div class="flex space-x-2">
+                             <button data-event-id="${event.id}" class="share-program-btn p-2 rounded-full hover:bg-gray-100 transition-colors">
+                                <img src="https://vfdxtujestpslpsvdkwh.supabase.co/storage/v1/object/public/sdgs/vecteezy_share-icon-png-on-transparent-background_14455886.png" class="w-5 h-5" alt="Share Icon">
+                             </button>
+                             ${detailButtonHTML}
                         </div>
                     </div>
                 </div>
@@ -308,6 +306,8 @@ const openDetailModal = async (eventId) => { // Dibuat async
         registerButtonHTML = `<button data-event-id="${event.id}" id="open-register-modal-btn" class="bg-sankara-green-dark text-white font-bold py-3 px-6 rounded-lg hover:bg-sankara-green-dark/90 transition-all">Jadi Volunteer</button>`;
     }
 
+    const sdgIconsHtml = (event.sdgs || []).map(sdg => sdgIcons[sdg] || '').join('');
+
     detailModalContent.innerHTML = `
         <div class="flex justify-between items-start mb-4">
             <h2 class="text-2xl font-bold text-sankara-dark">${event.title}</h2>
@@ -323,6 +323,12 @@ const openDetailModal = async (eventId) => { // Dibuat async
                 <p><strong class="font-semibold text-gray-800">Kuota Tersedia:</strong> ${remainingQuota !== null ? `${remainingQuota} Orang` : 'Terbatas'}</p>
                 <p><strong class="font-semibold text-gray-800">Waktu:</strong> ${formatDate(event.start_date)}</p>
                 <p><strong class="font-semibold text-gray-800">Lokasi:</strong> ${event.location || 'N/A'}</p>
+            </div>
+            <div>
+                <strong class="font-semibold text-gray-800 block mb-2">Tujuan SDGs:</strong>
+                <div class="flex flex-wrap gap-2">
+                    ${sdgIconsHtml || '<p class="text-sm text-gray-500">Tidak ada SDGs yang terkait.</p>'}
+                </div>
             </div>
             <div>
                 <strong class="font-semibold text-gray-800 block mb-2">Tugas Relawan:</strong>
@@ -364,45 +370,45 @@ const openRegisterModal = (eventId) => {
     detailModal.classList.add('hidden');
 
     registerModalContent.innerHTML = `
-           <div class="flex justify-between items-start mb-4">
-            <h2 class="text-xl font-bold text-sankara-dark">Pendaftaran Volunteer</h2>
-            <button id="close-register-modal" class="text-gray-500 text-3xl leading-none hover:text-gray-800">&times;</button>
-        </div>
-        <p class="text-gray-600 mb-4">Anda akan mendaftar untuk: <strong class="text-sankara-dark">${event.title}</strong></p>
-        
-        <form id="registration-form" class="space-y-4">
+         <div class="flex justify-between items-start mb-4">
+             <h2 class="text-xl font-bold text-sankara-dark">Pendaftaran Volunteer</h2>
+             <button id="close-register-modal" class="text-gray-500 text-3xl leading-none hover:text-gray-800">&times;</button>
+         </div>
+         <p class="text-gray-600 mb-4">Anda akan mendaftar untuk: <strong class="text-sankara-dark">${event.title}</strong></p>
+         
+         <form id="registration-form" class="space-y-4">
              <div>
-                <label for="phone-number" class="block text-sm font-medium text-gray-700">Nomor Ponsel Aktif *</label>
-                <div class="relative mt-1">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">+62</span>
-                    </div>
-                    <input type="tel" id="phone-number" required class="block w-full pl-12 pr-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="8123456789">
-                </div>
-            </div>
-             <div>
-                <label for="payment-proof" class="block text-sm font-medium text-gray-700">Unggah Bukti Pembayaran *</label>
-                <input type="file" id="payment-proof" required accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                 <label for="phone-number" class="block text-sm font-medium text-gray-700">Nomor Ponsel Aktif *</label>
+                 <div class="relative mt-1">
+                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                         <span class="text-gray-500 sm:text-sm">+62</span>
+                     </div>
+                     <input type="tel" id="phone-number" required class="block w-full pl-12 pr-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="8123456789">
+                 </div>
              </div>
-            <div class="pt-4 border-t">
-                <h3 class="font-semibold text-lg mb-2">Rincian Pembayaran</h3>
-                <div class="flex justify-between text-gray-600">
-                    <span>Biaya Program</span>
-                    <span>Rp ${new Intl.NumberFormat('id-ID').format(event.fee || 0)}</span>
-                </div>
+             <div>
+                 <label for="payment-proof" class="block text-sm font-medium text-gray-700">Unggah Bukti Pembayaran *</label>
+                 <input type="file" id="payment-proof" required accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+             </div>
+             <div class="pt-4 border-t">
+                 <h3 class="font-semibold text-lg mb-2">Rincian Pembayaran</h3>
                  <div class="flex justify-between text-gray-600">
-                    <span>Biaya Admin</span>
-                    <span>Rp 0</span>
-                </div>
+                     <span>Biaya Program</span>
+                     <span>Rp ${new Intl.NumberFormat('id-ID').format(event.fee || 0)}</span>
+                 </div>
+                  <div class="flex justify-between text-gray-600">
+                     <span>Biaya Admin</span>
+                     <span>Rp 0</span>
+                 </div>
                  <div class="flex justify-between font-bold text-sankara-dark text-lg mt-2">
-                    <span>Total Pembayaran</span>
-                    <span>Rp ${new Intl.NumberFormat('id-ID').format(event.fee || 0)}</span>
-                </div>
-            </div>
-            <button type="submit" class="w-full bg-sankara-green-dark text-white font-bold py-3 rounded-lg hover:bg-sankara-green-dark/90 transition-all">
-                Daftar & Bayar
-            </button>
-        </form>
+                     <span>Total Pembayaran</span>
+                     <span>Rp ${new Intl.NumberFormat('id-ID').format(event.fee || 0)}</span>
+                 </div>
+             </div>
+             <button type="submit" class="w-full bg-sankara-green-dark text-white font-bold py-3 rounded-lg hover:bg-sankara-green-dark/90 transition-all">
+                 Daftar & Bayar
+             </button>
+         </form>
     `;
     registerModal.classList.remove('hidden');
 
@@ -492,17 +498,30 @@ const setupTabListeners = () => {
 }
 
 document.addEventListener('click', async (e) => { // Dibuat async
-    const detailBtn = e.target.closest('.view-detail-btn');
-    const shareBtn = e.target.closest('.share-program-btn');
-
-    if (detailBtn) {
-        const eventId = detailBtn.dataset.eventId;
-        await openDetailModal(eventId); // Await pemanggilan fungsi
-    } else if (shareBtn) {
-        const eventId = shareBtn.dataset.eventId;
-        const eventToShare = allPrograms.find(e => e.id === eventId);
-        if (eventToShare) {
-            await shareProgram(eventToShare);
+    const target = e.target.closest('.view-detail-btn, .share-program-btn');
+    if (target) {
+        const eventId = target.dataset.eventId;
+        if (target.classList.contains('share-program-btn')) {
+            const event = allPrograms.find(e => e.id === eventId);
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: event.title,
+                        text: `Mari bergabung dalam program sukarela "${event.title}" dari Sankara!`,
+                        url: window.location.href, // Menggunakan URL halaman saat ini
+                    });
+                } catch (error) {
+                    console.error('Error sharing:', error);
+                }
+            } else {
+                navigator.clipboard.writeText(`Gabung program: ${event.title} - ${window.location.href}`).then(() => {
+                    alert('Tautan program telah disalin!');
+                }).catch(err => {
+                    console.error('Gagal menyalin tautan: ', err);
+                });
+            }
+        } else if (target.classList.contains('view-detail-btn')) {
+            await openDetailModal(eventId);
         }
     }
     if (e.target === detailModal || e.target === registerModal) {
