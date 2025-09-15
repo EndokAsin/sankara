@@ -3,115 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk atau Daftar - Sankara</title>
+    <title>Login & Daftar - Sankara</title>
+    <!-- Impor TailwindCSS dari CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Menambahkan font Poppins dan Playfair Display */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Poppins', sans-serif; background-color: #f0fdf4; }
-        .tab-active { border-color: #16a34a; color: #16a34a; font-weight: 600; }
-        .otp-input { width: 40px; height: 40px; text-align: center; border-radius: 8px; border: 1px solid #ccc; font-size: 1.2rem; }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0fdf4; /* Warna latar utama hijau sangat muda */
+            overflow-x: hidden; /* Mencegah scroll horizontal */
+        }
+        .font-brand {
+            font-family: 'Playfair Display', serif;
+        }
+        .tab-active {
+            border-color: #16a34a;
+            color: #16a34a;
+            font-weight: 600;
+        }
     </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'sankara-green': { light: '#dcfce7', DEFAULT: '#4ade80', dark: '#16a34a' },
+              'sankara-dark': '#1e293b',
+            }
+          }
+        }
+      }
+    </script>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="bg-sankara-green-light text-sankara-dark">
+    <div class="container mx-auto flex items-center justify-center min-h-screen p-4">
+        <div class="w-full max-w-md">
+            <div class="bg-white p-8 rounded-2xl shadow-xl space-y-6">
+                <div class="text-center">
+                    <a href="index.html"><img src="logo.png" alt="Sankara Logo" class="w-20 h-20 mx-auto mb-2" onerror="this.style.display='none'"></a>
+                    <h1 id="form-title" class="text-2xl font-bold text-sankara-dark">Masuk ke Akun Anda</h1>
+                    <p id="form-subtitle" class="text-gray-500 mt-1">Selamat datang kembali! Silakan masuk.</p>
+                </div>
+                
+                <div id="notification" class="hidden p-4 text-sm rounded-lg mb-4"></div>
 
-    <div class="w-full max-w-md">
-        <!-- Notifikasi -->
-        <div id="notification" class="hidden p-4 text-sm rounded-lg mb-4" role="alert"></div>
+                <!-- Kontainer Form Utama -->
+                <div id="main-forms-container">
+                    <div class="border-b border-gray-200">
+                        <nav class="-mb-px flex justify-center space-x-6">
+                            <button id="login-tab" class="py-4 px-1 border-b-2 font-medium text-sm tab-active">Login</button>
+                            <button id="register-tab" class="py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">Daftar</button>
+                        </nav>
+                    </div>
 
-        <!-- Bagian Utama: Login & Registrasi -->
-        <div id="main-forms-container" class="bg-white p-8 rounded-2xl shadow-xl w-full">
-            <div class="text-center mb-8">
-                <img src="logo.png" alt="Sankara Logo" class="mx-auto h-16 mb-4">
-                <h1 id="form-title" class="text-2xl font-bold text-gray-800">Masuk ke Akun Anda</h1>
-                <p id="form-subtitle" class="text-gray-500 mt-2">Selamat datang kembali! Silakan masuk.</p>
+                    <!-- Form Login -->
+                    <form id="login-form" class="space-y-4 pt-6">
+                        <div>
+                            <label for="login-email" class="sr-only">Email</label>
+                            <input type="email" id="login-email" placeholder="Alamat Email" required class="w-full p-3 border rounded-md bg-gray-50">
+                        </div>
+                        <div>
+                            <label for="login-password" class="sr-only">Password</label>
+                            <input type="password" id="login-password" placeholder="Password" required class="w-full p-3 border rounded-md bg-gray-50">
+                        </div>
+                        <div class="text-right">
+                            <a href="#" id="forgot-password-link" class="text-sm text-sankara-green-dark hover:underline">Lupa Password?</a>
+                        </div>
+                        <button type="submit" class="w-full bg-sankara-dark text-white font-bold py-3 rounded-lg hover:bg-black">Masuk</button>
+                    </form>
+
+                    <!-- Form Registrasi -->
+                    <form id="register-form" class="hidden space-y-4 pt-6">
+                         <div>
+                            <label for="register-fullname" class="sr-only">Nama Lengkap</label>
+                            <input type="text" id="register-fullname" placeholder="Nama Lengkap" required class="w-full p-3 border rounded-md bg-gray-50">
+                        </div>
+                        <div>
+                            <label for="register-email" class="sr-only">Email</label>
+                            <input type="email" id="register-email" placeholder="Alamat Email" required class="w-full p-3 border rounded-md bg-gray-50">
+                        </div>
+                        <div>
+                            <label for="register-password" class="sr-only">Password</label>
+                            <input type="password" id="register-password" placeholder="Password (min. 6 karakter)" required class="w-full p-3 border rounded-md bg-gray-50">
+                        </div>
+                        <button type="submit" class="w-full bg-sankara-dark text-white font-bold py-3 rounded-lg hover:bg-black">Daftar & Dapatkan Kode</button>
+                    </form>
+
+                    <!-- Pemisah "atau" -->
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300"></div></div>
+                        <div class="relative flex justify-center text-sm"><span class="bg-white px-2 text-gray-500">atau</span></div>
+                    </div>
+
+                    <!-- Tombol Login Google -->
+                    <div class="space-y-3">
+                        <button id="google-login-btn" class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C42.022,35.337,44,30.035,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                            <span>Masuk dengan Google</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Verifikasi OTP -->
+                <div id="otp-section" class="hidden text-center">
+                    <h2 class="text-xl font-bold text-sankara-dark">Verifikasi Akun Anda</h2>
+                    <p class="text-gray-500 mt-1 mb-4">Kami telah mengirim kode 6 digit ke <strong id="otp-email-display">email@anda.com</strong>.</p>
+                    <form id="otp-form">
+                        <div id="otp-inputs" class="flex justify-center gap-2 mb-4">
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                        </div>
+                        <button type="submit" class="w-full bg-sankara-dark text-white font-bold py-3 rounded-lg">Verifikasi Akun</button>
+                    </form>
+                </div>
+
+                <!-- Form Reset Password -->
+                <div id="reset-password-section" class="hidden">
+                    <h2 class="text-xl font-bold text-sankara-dark text-center">Reset Password</h2>
+                    <form id="request-reset-form" class="space-y-4 pt-4">
+                        <p class="text-sm text-gray-500 text-center">Masukkan email Anda untuk menerima kode reset.</p>
+                        <div><input type="email" id="reset-email" placeholder="Alamat Email" required class="w-full p-3 border rounded-md bg-gray-50"></div>
+                        <button type="submit" class="w-full bg-sankara-dark text-white font-bold py-3 rounded-lg">Kirim Kode</button>
+                    </form>
+                    <form id="verify-reset-otp-form" class="hidden space-y-4 pt-4 text-center">
+                         <p class="text-sm text-gray-500">Masukkan kode 6 digit yang kami kirim.</p>
+                        <div id="reset-otp-inputs" class="flex justify-center gap-2 mb-4">
+                           <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                            <input type="text" maxlength="1" class="w-12 h-12 text-center text-2xl border rounded-md" required>
+                        </div>
+                        <button type="submit" class="w-full bg-sankara-dark text-white font-bold py-3 rounded-lg">Verifikasi Kode</button>
+                    </form>
+                     <form id="update-password-form" class="hidden space-y-4 pt-4">
+                         <p class="text-sm text-gray-500 text-center">Buat password baru Anda.</p>
+                        <div><input type="password" id="new-password" placeholder="Password Baru (min. 6 karakter)" required class="w-full p-3 border rounded-md bg-gray-50"></div>
+                        <button type="submit" class="w-full bg-sankara-dark text-white font-bold py-3 rounded-lg">Simpan Password Baru</button>
+                    </form>
+                    <div class="text-center mt-4">
+                        <button id="back-to-login-1" class="text-sm text-sankara-green-dark hover:underline">Kembali ke Login</button>
+                    </div>
+                </div>
             </div>
-            
-            <div class="flex border-b mb-6">
-                <button id="login-tab" class="flex-1 py-2 tab-active">Masuk</button>
-                <button id="register-tab" class="flex-1 py-2 text-gray-500">Daftar</button>
-            </div>
-
-            <!-- Form Login -->
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="login-email" class="block text-sm font-medium text-gray-700">Alamat Email</label>
-                    <input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div>
-                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="text-right">
-                    <a href="#" id="forgot-password-link" class="text-sm text-green-600 hover:underline">Lupa Password?</a>
-                </div>
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">Masuk</button>
-            </form>
-
-            <!-- Form Registrasi -->
-            <form id="register-form" class="hidden space-y-6">
-                 <div>
-                    <label for="register-fullname" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                    <input type="text" id="register-fullname" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div>
-                    <label for="register-email" class="block text-sm font-medium text-gray-700">Alamat Email</label>
-                    <input type="email" id="register-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div>
-                    <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="register-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
-                </div>
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">Daftar & Dapatkan Kode</button>
-            </form>
-        </div>
-
-        <!-- Bagian Verifikasi OTP Pendaftaran -->
-        <div id="otp-section" class="hidden bg-white p-8 rounded-2xl shadow-xl w-full text-center">
-            <h1 class="text-2xl font-bold text-gray-800">Verifikasi Email Anda</h1>
-            <p class="text-gray-500 mt-2 mb-6">Kami telah mengirimkan kode 6 digit ke <strong id="otp-email-display" class="text-gray-900"></strong>.</p>
-            <form id="otp-form">
-                <div id="otp-inputs" class="flex justify-center gap-2 mb-6">
-                    <input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required>
-                </div>
-                <button type="submit" class="w-full py-3 px-4 bg-green-600 text-white rounded-md hover:bg-green-700">Verifikasi Akun</button>
-            </form>
-        </div>
-
-        <!-- Bagian Lupa Password -->
-        <div id="reset-password-section" class="hidden bg-white p-8 rounded-2xl shadow-xl w-full">
-            <!-- Tahap 1: Minta Token -->
-            <form id="request-reset-form">
-                <h1 class="text-2xl font-bold text-gray-800 text-center">Reset Password</h1>
-                <p class="text-gray-500 mt-2 mb-6 text-center">Masukkan email Anda untuk mendapatkan kode reset.</p>
-                <div>
-                    <label for="reset-email" class="block text-sm font-medium text-gray-700">Alamat Email</label>
-                    <input type="email" id="reset-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <button type="submit" class="mt-6 w-full py-3 px-4 bg-green-600 text-white rounded-md hover:bg-green-700">Kirim Kode</button>
-                <button type="button" id="back-to-login-btn" class="mt-4 w-full text-sm text-gray-600 hover:underline">Kembali ke Login</button>
-            </form>
-            <!-- Tahap 2: Verifikasi Token -->
-            <form id="verify-reset-otp-form" class="hidden">
-                <h1 class="text-2xl font-bold text-gray-800 text-center">Verifikasi Kode</h1>
-                <p class="text-gray-500 mt-2 mb-6 text-center">Masukkan 6 digit kode dari email Anda.</p>
-                <div id="reset-otp-inputs" class="flex justify-center gap-2 mb-6">
-                    <input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required><input type="text" maxlength="1" class="otp-input" required>
-                </div>
-                <button type="submit" class="w-full py-3 px-4 bg-green-600 text-white rounded-md hover:bg-green-700">Verifikasi Kode</button>
-            </form>
-            <!-- Tahap 3: Update Password -->
-            <form id="update-password-form" class="hidden">
-                <h1 class="text-2xl font-bold text-gray-800 text-center">Buat Password Baru</h1>
-                <p class="text-gray-500 mt-2 mb-6 text-center">Masukkan password baru Anda.</p>
-                <div>
-                    <label for="new-password" class="block text-sm font-medium text-gray-700">Password Baru</label>
-                    <input type="password" id="new-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <button type="submit" class="mt-6 w-full py-3 px-4 bg-green-600 text-white rounded-md hover:bg-green-700">Simpan Password Baru</button>
-            </form>
         </div>
     </div>
-    
     <script src="auth.js" type="module"></script>
 </body>
 </html>

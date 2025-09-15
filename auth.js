@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
         verifyResetOtpForm: document.getElementById('verify-reset-otp-form'),
         resetOtpInputsContainer: document.getElementById('reset-otp-inputs'),
         updatePasswordForm: document.getElementById('update-password-form'),
-        backToLoginBtn: document.getElementById('back-to-login-btn')
+        backToLoginBtn: document.getElementById('back-to-login-1'),
+        googleLoginBtn: document.getElementById('google-login-btn')
     };
 
     let userEmailForVerification = '';
@@ -88,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === Handler Form ===
     
+    // Handler form login
     elements.loginForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value;
@@ -107,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handler form registrasi
     elements.registerForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('register-email').value;
@@ -139,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handler form verifikasi OTP pendaftaran
     elements.otpForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const token = Array.from(elements.otpInputsContainer.children).map(input => input.value).join('');
@@ -164,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handler form minta reset password
     elements.requestResetForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('reset-email').value;
@@ -185,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Handler form verifikasi OTP reset password
     elements.verifyResetOtpForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const token = Array.from(elements.resetOtpInputsContainer.children).map(input => input.value).join('');
@@ -211,6 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Handler form update password baru
     elements.updatePasswordForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newPassword = document.getElementById('new-password').value;
@@ -238,6 +245,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Handler Login Pihak Ketiga
+    const handleOAuthLogin = async (provider) => {
+        const { error } = await supabase.auth.signInWithOAuth({ provider });
+        if (error) showNotification(`Gagal login dengan ${provider}: ${error.message}`, 'error');
+    };
+
+    elements.googleLoginBtn?.addEventListener('click', () => handleOAuthLogin('google'));
+
     // === Inisialisasi ===
     setupOtpInputListeners(elements.otpInputsContainer);
     setupOtpInputListeners(elements.resetOtpInputsContainer);
